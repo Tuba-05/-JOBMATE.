@@ -1,0 +1,280 @@
+body.home-page {
+    margin: 0;
+    padding: 0;
+    width: 100vw; 
+    height: 100vh; 
+    overflow-x: hidden; /* Prevent horizontal scroll due to any overflow */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+/* Center the content of the home page */
+.home-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full viewport height */
+    flex-direction: column;
+    text-align: center;
+    overflow: hidden;
+}
+
+.background-video {
+    position: fixed; /* Fixed for a full background */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+}
+/* Style for the "Welcome" text */
+.home-page-title {
+    color:  antiquewhite;
+    font-family: 'Protest Strike', sans-serif;
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    position: relative;
+    display: inline-block;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards;
+    animation-delay: 2.5s;
+    margin-top: -200px;
+    padding-bottom: 20px;
+}
+/* Each letter of the word "Welcome" fades in one by one */
+.home-page-title span.letter {
+    display: inline-block;
+    opacity: 0;
+    animation: letterFadeIn 0.3s ease forwards;
+    /* , bounce 5s infinite; */
+}
+
+.home-page-title2 {
+    color: antiquewhite;
+    font-family: "Italianno", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3.5rem;
+    font-weight: bolder;
+    padding-top: 40px;
+    margin: 0;
+}
+
+.home-page-title2 span.letter {
+    display: inline-block;
+    opacity: 0;
+    animation: letterFadeIn 0.3s ease forwards;
+    /* , bounce 10s infinite; */
+    animation-delay: 10s;
+}
+
+/* Image container to center the image below the welcome text */
+.image-container {
+    margin-top: 10px; /* Space between Welcome and image */
+    opacity: 0; /* Start hidden */
+    animation: fadeIn 1s ease forwards, bounce 5s infinite; 
+    animation-delay: 2.9s; /* Delay to match the appearance of the last letter */
+    margin: 0;
+}
+
+/* Image styles */
+.animated-image {
+    animation: tilt 1s infinite;
+    animation-delay: 5s ;
+    width: 100px; /* Adjust width as needed */
+    height: auto; /* Maintain aspect ratio */
+}
+.animated-image:hover {
+    transform: scale(1.05); /* Slight scale on hover */
+    transition: transform 0.3s ease; /* Smooth transition */
+}
+
+/* Button container - align buttons vertically on the right side */
+.home-page-button-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align buttons to the right */
+    position: absolute;
+    right: 50px; /* Distance from the right side of the page */
+    top: 150px; 
+    gap: 40px; /* Increase spacing */
+}
+
+/* Button styles with black and white theme */
+.home-page-btn {
+    font-family: 'Protest Strike', sans-serif;
+    background: linear-gradient(145deg, #7d7d7d, #000000); /* Dark black */
+    color: white;
+    border: none;
+    padding: 20px;
+    font-size: 1.7rem;
+    cursor: pointer;
+    border-radius: 50%; /* Circular shape */
+    transition: all 0.3s ease;
+    margin: 20px 0; /* Space between buttons */
+    width: 180px;
+    height: 180px;
+    animation: bounce 4s infinite;
+    margin: 0;
+    padding-bottom: 20px;
+    margin-right: 10px;
+    
+}
+
+.home-page-btn:hover {
+    background-color: #aeaaaa; /* Light gray on hover */
+    color: #000;
+    transform: scale(1.1);
+    /* animation: hoverEffectRightToLeft 0.5s ease forwards; */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* Add subtle shadow on hover */
+}
+
+/* Hover effect on buttons - right to left */
+@keyframes hoverEffectRightToLeft {
+    from {
+        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+    }
+    to {
+        box-shadow: -5px -5px 15px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Fade in animation for the overlay text */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* General animation for tilting effect */
+@keyframes tilt {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(10deg);
+    }
+}
+
+/* Bounce animation for elements */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Letter fade in animation */
+@keyframes letterFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* The container to hold the SVG waves */
+.wave-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -1; /* Behind all other content */
+    overflow: hidden;
+  }
+.home-page-container {
+  display: flex;
+  gap: 20px; 
+  overflow: hidden;
+  margin-top: -220px; 
+  padding-bottom: 20px; 
+  }
+/* Overlay text styles */
+.overlay-text {
+    gap: 20px;
+    cursor: pointer;
+    background: rgba(66, 66, 66, 0.9); /* Keep the same background */
+    border-radius: 10px;
+    padding: 20px;
+    color: #fff;
+    flex: 1;
+    border: 2px solid rgba(255, 255, 255, 0.3); /* Light border for separation */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6); /* Standard shadow for depth */
+    transition: transform 0.3s ease, border-color 0.3s ease; /* Animation for 'pop' effect */
+    animation: backgroundPulse 5s infinite; /
+}
+
+.overlay-text:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3), 0 4px 15px rgba(0, 0, 0, 0.4); /* Add a glow effect *//* Highlight border on hover */
+}
+
+
+
+.overlay-text p {
+    margin: 0;
+    line-height: 1.5;
+    color: #ffffff;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    transition: opacity 0.5s ease; /* Smooth fade-in effect */
+}
+
+.overlay-text:hover p {
+    opacity: 0.85; /* Make text slightly dimmer on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .home-page-title, .home-page-title2 {
+        font-size: 2.5rem;
+    }
+
+    .animated-image {
+        width: 80px;
+    }
+
+    .home-page-btn {
+        width: 130px;
+        height: 130px;
+        font-size: 1rem;
+    }
+
+    .overlay-text {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-page-title, .home-page-title2 {
+        font-size: 2rem;
+    }
+
+    .animated-image {
+        width: 60px;
+    }
+
+    .home-page-btn {
+        width: 110px;
+        height: 110px;
+        font-size: 0.9rem;
+    }
+
+    .overlay-text {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+}

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "Backend",  # my app 
 ]
 
 MIDDLEWARE = [
@@ -54,7 +55,7 @@ ROOT_URLCONF = "JOBCODE.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [], # templates placed if using html, css
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -71,14 +72,19 @@ WSGI_APPLICATION = "JOBCODE.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# pass: taiba009
+# postgresql://postgres.fbffjtjimkkwpelvoosu:[YOUR-PASSWORD]@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.dxyladzpvlqwmmwfxxik',
+        'PASSWORD': 'taiba009',
+        'HOST': 'aws-1-ap-southeast-1.pooler.supabase.com',
+        'PORT': '6543',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

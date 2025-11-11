@@ -22,6 +22,6 @@ from . import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     # path("path name after port no. 8000/", views.function from views file, name = optional)
-    path(" ", views.home, name='home'),
+    path("", views.home, name='home'),
     path("Backend/", include('Backend.urls') ),
 ]

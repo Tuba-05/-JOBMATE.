@@ -4,7 +4,7 @@ import "./LogSign.css";
 // import { savecompanyDetails, savecandidateDetails , checkLoginCredentials } from "../firebase";
 // If using Firebase for storing user data
 
-function LogSign() {  
+function LogSign() {
   const location = useLocation(); // t
   const navigate = useNavigate(); // Initialize navigate hook
   const mode = location.state?.mode || "jobseeker"; // Retrieve mode from state or default to "jobseeker"
@@ -73,37 +73,45 @@ function LogSign() {
       alert("Failed to create account. Please try again.");
     }
   };
-  // candidate login
-  const handleshowprofile = () => {
-    if (!isHiringDeskMode) {
-      navigate("/Pf");
-    }
-  };
+
   //login part for both
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     if (email && password) {
       try {
-        const isValidLogin = true;
         const UserLoginDetailes = {
-            email: email,
-            password: password
+          email: email,
+          password: password,
         };
-        if (isValidLogin) { 
-          const response = await fetch("http://127.0.0.1:8000/api/login/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(UserLoginDetailes),
-      });
-      const data = await response.json(); // <-- READ RESPONSE HERE
-      if (data.success){
-        console.log("Logged in:", email);
-          if (mode === "jobseeker") {
-            navigate("/cv");
+        const response = await fetch("http://127.0.0.1:8000/api/login/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(UserLoginDetailes),
+        });
+        const data = await response.json(); // <-- READ RESPONSE HERE
+        if (data.success) {
+          console.log("Logged in:", email);
+          if (data.role === "candidate") {
+            const cv_response = await fetch(
+              "http://127.0.0.1:8000/api/check-resume/",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  role: data.role,
+                  UserId: data.user_id,
+                }),
+              }
+            );
+            const cv_data = await cv_response.json();
+            if (cv_data.success) {
+              navigate("/Pf");
+            } else {
+              navigate("/cv");
+            }
           } else {
             navigate("/company-dashboard");
           }
-        }     
         } else {
           alert("Invalid email or password.");
         }
@@ -251,11 +259,7 @@ function LogSign() {
           </div>
           {/* login form submit button */}
           <div className="input-group mb-3 justify-content-center">
-            <button
-              type="submit"
-              className="btn login-btn w-50 fs-6"
-              onClick={handleshowprofile}
-            >
+            <button type="submit" className="btn login-btn w-50 fs-6">
               Login
             </button>
           </div>

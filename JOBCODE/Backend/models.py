@@ -4,7 +4,7 @@ from django.db import models
 class CustomUser(models.Model):
     username = models.CharField(max_length=50, null=False)
     email = models.EmailField(null=False)
-    password = models.CharField(max_length=7, null=False)
+    password = models.CharField(max_length=200, null=False)
     ROLE_CHOICES = [
         ("candidate", "Candidate"),
         ("company", "Company"),

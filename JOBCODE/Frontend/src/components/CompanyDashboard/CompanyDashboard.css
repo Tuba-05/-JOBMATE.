@@ -1,0 +1,137 @@
+/* 3D Parallax Effect Container */
+.dashboard-3d-container {
+  background: url('https://images.pexels.com/photos/5992498/pexels-photo-5992498.jpeg?auto=compress&cs=tinysrgb&w=600') center/cover no-repeat;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.dashboard-3d-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2); /* Add a dark overlay */
+  z-index: 1; /* Make sure this layer is behind the form */
+}
+.dashboard-3d-container::after {
+  /* Semi-transparent overlay to dim the background */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+  z-index: 1;
+}
+
+/* Dashboard Container with 3D Shadow and Layered Effect */
+.dashboard-container {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.7), 0px 10px 10px rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  border-radius: 15px;
+  max-width: 800px;
+  width: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(5deg) rotateY(-5deg);
+  transition: transform 0.5s ease;
+  z-index: 2;
+}
+
+.dashboard-container:hover {
+  transform: rotateX(0deg) rotateY(0deg) scale(1.02);
+  box-shadow: 0px 30px 60px rgba(0, 0, 0, 0.8), 0px 15px 15px rgba(255, 255, 255, 0.15);
+}
+
+/* Header and Title */
+.dashboard-header {
+  background: linear-gradient(to bottom right, #000, #555);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Header Styling for TalentHub */
+.dashboard-title {
+  font-size: 2rem; /* Adjust the size as needed */
+  font-weight: bold;
+  color: #ffd700; /* Yellow color */
+  text-shadow: 0px 0px 8px rgba(255, 215, 0, 0.8), /* Outer glow */
+               2px 2px 4px rgba(0, 0, 0, 0.6); /* Shadow for depth */
+  text-align: center;
+  margin: 1rem 0; /* Add spacing */
+  letter-spacing: 1px; /* Slight spacing for a polished look */
+  animation: glowAnimation 2s infinite alternate; /* Optional glowing animation */
+}
+
+/* Optional Glow Animation */
+@keyframes glowAnimation {
+  0% {
+    text-shadow: 0px 0px 8px rgba(255, 215, 0, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.6);
+  }
+  100% {
+    text-shadow: 0px 0px 16px rgba(255, 215, 0, 1), 2px 2px 6px rgba(0, 0, 0, 0.8);
+  }
+}
+
+.button-containerboth {
+  display: flex;
+  gap: 20px; /* Adjust the gap between buttons */
+  margin-bottom: 20px; /* Space below the button container */
+  justify-content: center; /* Aligns buttons in the center horizontally */
+}
+/* Buttons */
+.leader-dashboard-btn, .add-vacancy-btn {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #6c757d, #4f4f4f);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transitions */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.leader-dashboard-btn:hover, .add-vacancy-btn:hover {
+  background: linear-gradient(135deg, #5c5c5c, #3e3e3e); /* Darker shade */
+  transform: scale(1.05); /* Slight scaling */
+  box-shadow: 0px 6px 15px rgba(255, 255, 255, 0.3); /* Glow on hover */
+}
+.leader-dashboard-btn:active, .add-vacancy-btn:active {
+  transform: scale(0.98); /* Slight press effect */
+  background: linear-gradient(135deg, #4f4f4f, #3a3a3a); /* Slightly darker */
+}
+
+/* Vacancy Form */
+.vacancy-form-container {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
+  animation: slideIn 0.5s ease forwards;
+  transform-style: preserve-3d;
+  z-index: 2;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px) translateZ(10px); }
+  to { opacity: 1; transform: translateY(0) translateZ(10px); }
+}
+
+/* Ensure Text Readability */
+.dashboard-container, .vacancy-form-container {
+  color: #f9f9f9;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}

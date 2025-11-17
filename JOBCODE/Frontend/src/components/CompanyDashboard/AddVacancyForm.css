@@ -1,0 +1,126 @@
+/* Form Container */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem; /* Increased padding for better layout */
+  margin: 2.5rem auto; /* Increased margin */
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15),
+    rgba(0, 0, 0, 0.2)
+  ); /* Subtle gradient for depth */
+  backdrop-filter: blur(6px); /* Slightly increased blur for a cleaner look */
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.4); /* Enhanced shadow for depth */
+  width: 90%;
+  max-width: 500px;
+  border: 1px solid rgba(255, 255, 255, 0.25); /* Subtle border */
+  animation: fadeIn 1s ease-in;
+  position: relative;
+}
+
+.form-container:hover {
+  backdrop-filter: blur(8px);
+  box-shadow: 0px 8px 25px rgba(255, 255, 255, 0.3);
+}
+
+/* Input Fields */
+.vacancy-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Increased spacing between fields */
+  width: 100%;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.9rem; /* Slightly larger padding for better usability */
+  font-size: 1rem;
+  color: snow;
+  background: rgba(0, 0, 0, 0.55); /* Increased transparency */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  outline: none;
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  box-shadow: 0px 0px 6px 2px rgba(255, 255, 255, 0.8); /* Stronger focus effect */
+  background: rgba(0, 0, 0, 0.65);
+}
+
+/* Title */
+.form-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin-bottom: 1.5rem; /* More space below the title */
+  color: #ffffff;
+  text-align: center;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+  
+}
+
+/* Vacancy Form */
+.vacancy-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Labels */
+.form-label {
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  color: snow;
+  background: rgba(0, 0, 0, 0.6); /* Darker background for better readability */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  outline: none;
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  box-shadow: 0px 0px 8px 2px rgba(255, 255, 255, 0.8); /* Stronger focus effect */
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Placeholder Text */
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: rgba(240, 240, 240, 0.7);
+}
+
+
+/* Submit Button */
+.submit-btn {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #6c757d, #4f4f4f);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Better visibility */
+}
+
+.submit-btn:hover {
+  background: linear-gradient(135deg, #5c5c5c, #3e3e3e);
+  box-shadow: 0px 6px 15px rgba(255, 255, 255, 0.3);
+}

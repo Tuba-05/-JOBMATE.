@@ -7,5 +7,7 @@ urlpatterns = [
     path("login/", views.login, name='login'),
     path("upload-resume/", views.upload_resume, name='resume_uploading'), 
     path("check-resume/", views.check_resume, name='resume_checking'),
-    path("display-profile-info/", views.parse_resume_info, name='parsing_resume_info') 
+    path("display-profile-info/", views.parse_resume_info, name='parsing_resume_info'), 
+    path("add-job-vacancy/", views.add_job, name='add_job_vacancies'),
+
 ]

@@ -17,15 +17,15 @@ def register(request):
         return Response({"error": "Invalid request method"}, status=400)
 
     try:
-        data = request.data
-        username = data.get("username")
-        email = data.get("email")
-        password = data.get("password")
+        registerUser_data = request.data
+        username = registerUser_data.get("username")
+        email = registerUser_data.get("email")
+        password = registerUser_data.get("password")
         hashed_password = make_password(password)  # making password hashed
 
         if not CustomUser.objects.filter(email=email).exists():
 
-            if data.get("isHiringDeskMode"):  # Company mode
+            if registerUser_data.get("isHiringDeskMode"):  # Company mode
                 user = CustomUser.objects.create(
                     username=username,
                     email=email,
@@ -35,9 +35,9 @@ def register(request):
 
                 Company.objects.create(
                     user=user,
-                    address=data.get("companyAddress"),
-                    contact=data.get("contactNumber"),
-                    website=data.get("companyWebsite"),
+                    address=registerUser_data.get("companyAddress"),
+                    contact=registerUser_data.get("contactNumber"),
+                    website=registerUser_data.get("companyWebsite"),
                 )
 
             else:  # Candidate mode
@@ -76,9 +76,9 @@ def login(request):
     """ function takes user inputs for logged in """
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
-    data = request.data
-    email = data.get("email")
-    password = data.get("password")
+    loginUser_data = request.data
+    email = loginUser_data.get("email")
+    password = loginUser_data.get("password")
     try:
         user = CustomUser.objects.get(email=email)
     except CustomUser.DoesNotExist:
@@ -105,9 +105,9 @@ def check_resume(request):
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
 
-    data = request.data
-    if data.get("role") == "candidate":
-        user_id = data.get("UserId")
+    user_data = request.data
+    if user_data.get("role") == "candidate":
+        user_id = user_data.get("UserId")
         try:
             candidate = Candidate.objects.get(user_id=user_id)
         except Candidate.DoesNotExist:
@@ -163,3 +163,21 @@ def parse_resume_info(request):
     """ function parse user info from resume & send it to frontend """
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
+    ...
+
+@api_view(['POST'])
+def add_job(request):
+    """ function stores job vacancies in DB from frontend"""
+    if request.method != "POST":  # invalid http method
+        return Response({"error": "Invalid request method"}, status=400)
+
+    jobVacancy_data = request.data
+    job_title = jobVacancy_data.get("title")
+    job_skillsRequired = jobVacancy_data.get("requiredSkills")
+    job_levelOfExperience = jobVacancy_data.get("levelOfExperience")
+    job_additionalRequirements = jobVacancy_data.get("additionalRequirements")
+    job_location = jobVacancy_data.get("location")
+    job_timing = jobVacancy_data.get("timing")
+
+    return Response({})
+

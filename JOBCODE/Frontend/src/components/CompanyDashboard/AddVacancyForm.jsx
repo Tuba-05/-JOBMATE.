@@ -10,6 +10,8 @@ const VacancyForm = () => {
     requiredSkills: "",
     levelOfExperience: "",
     additionalRequirements: "",
+    location: "",
+    timing: "",  
   });
 
   // Handle input changes
@@ -18,35 +20,45 @@ const VacancyForm = () => {
   };
 
   // Save to Firebase
-  const AddVacancy = async (data) => {
-    const database = getDatabase();
-    const vacancyRef = ref(database, "Jobs"); // Path to Jobs in Firebase
-    await push(vacancyRef, data); // Push data with auto-generated key
-  };
+  // const AddVacancy = async (data) => {
+  //   const database = getDatabase();
+  //   const vacancyRef = ref(database, "Jobs"); // Path to Jobs in Firebase
+  //   await push(vacancyRef, data); // Push data with auto-generated key
+  // };
 
   // Handle form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      await AddVacancy(vacancyData); // Save vacancy data to Firebase
-      alert("Vacancy submitted successfully!");
-      
-      // Navigate to the "add-test" page
-      navigate("/add-test");
-      
+      // await AddVacancy(vacancyData); // Save vacancy data to Firebase
+      const response = await fetch("http://127.0.0.1:8000/api/add-job-vacancy/",{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(vacancyData),
+      }); 
+      const vacancyResponse = await response.json();
+      if (vacancyResponse. success){
+        alert("Vacancy submitted successfully!");
+        // Navigate to the "add-test" page
+        navigate("/add-test");
+      }
+      else{
+        alert("Error from backend.");
+      }    
       // Clear form fields
       setVacancyData({
         title: "",
         requiredSkills: "",
         levelOfExperience: "",
         additionalRequirements: "",
+        location: "",
+        timing: "",
       });
     } catch (error) {
       console.error("Error submitting vacancy:", error);
       alert("Failed to submit vacancy. Please try again.");
     }
   };
-
   return (
     <div className="form-container">
       <h3 className="form-title">Add a New Vacancy</h3>

@@ -1,40 +1,42 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./AddTest.css";
-import { storeTestData } from "../firebase"; 
 
 const AddTest = () => {
-  const [testTitle, setTestTitle] = useState("");
-  const [isTimedTest, setIsTimedTest] = useState(false);
-  const [timer, setTimer] = useState("");
+  const [testTitle, setTestTitle] = useState(""); // State for test title
+  const [isTimedTest, setIsTimedTest] = useState(false); // State for timed test checkbox
+  const [timer, setTimer] = useState(""); // State for timer (if timed test is enabled)
+  // Array of questions → each question contains text, 4 options, and a correct answer
   const [questions, setQuestions] = useState([
     { question: "", options: ["", "", "", ""], correctAnswer: "" },
   ]);
+  
+  const MAX_QUESTIONS = 10; // Maximum number of questions allowed
 
-  const MAX_QUESTIONS = 10;
-
+  // Handlers for input values
   const handleTestTitleChange = (e) => setTestTitle(e.target.value);
   const handleIsTimedTestChange = (e) => setIsTimedTest(e.target.checked);
   const handleTimerChange = (e) => setTimer(e.target.value);
 
+  // Handles question text update
   const handleQuestionChange = (index, value) => {
     const updatedQuestions = [...questions];
     updatedQuestions[index].question = value;
     setQuestions(updatedQuestions);
   };
-
+  // Handles option text update
   const handleOptionChange = (qIndex, optIndex, value) => {
     const updatedQuestions = [...questions];
     updatedQuestions[qIndex].options[optIndex] = value;
     setQuestions(updatedQuestions);
   };
-
+  // Handles correct answer dropdown update
   const handleCorrectAnswerChange = (qIndex, selectedValue) => {
     const updatedQuestions = [...questions];
     updatedQuestions[qIndex].correctAnswer = selectedValue;
     setQuestions(updatedQuestions);
   };
-
+  // Adds a new empty question if limit not reached
   const addQuestion = () => {
     if (questions.length < MAX_QUESTIONS) {
       setQuestions([
@@ -44,8 +46,9 @@ const AddTest = () => {
     }
   };
 
+  // Form submit handler
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // prevents page reload
 
     const testData = {
       testTitle,
@@ -55,21 +58,31 @@ const AddTest = () => {
     };
 
     try {
+      // await storeTestData(testData); // Firestore store function
+        const response = await fetch("http://127.0.0.1:8000/api/test-scores/",{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(testData),
+      });
+      const testResult = await response.json();
       
-      await storeTestData(testData);
-
       alert("Test added successfully!");
+
+      // Reset form
       setTestTitle("");
       setQuestions([{ question: "", options: ["", "", "", ""], correctAnswer: "" }]);
       setIsTimedTest(false);
       setTimer("");
-    } catch (error) {
+    } 
+    catch (error) {
       alert("Failed to submit test. Please try again.");
     }
   };
 
   return (
     <div className="add-test-container">
+
+      {/* Progress Bar showing how many questions added */}
       <div className="progress-bar">
         <div
           className="progress"
@@ -85,10 +98,14 @@ const AddTest = () => {
 
       <div className="neumorphism-card">
         <h1 className="text-center mb-4 animate__fadeIn">Design Your Test</h1>
+
         <p className="text-center text-white">
           <strong>Questions Added: {questions.length}/{MAX_QUESTIONS}</strong>
         </p>
+
         <form onSubmit={handleSubmit} className="animate__fadeInUp">
+
+          {/* Test Title */}
           <div className="mb-3">
             <label className="form-label">Test Title</label>
             <input
@@ -101,6 +118,7 @@ const AddTest = () => {
             />
           </div>
 
+          {/* Timed Test Checkbox */}
           <div className="form-check mb-3">
             <input
               type="checkbox"
@@ -114,6 +132,7 @@ const AddTest = () => {
             </label>
           </div>
 
+          {/* Timer input only if timed test is checked */}
           {isTimedTest && (
             <div className="mb-3">
               <label className="form-labeladd">Timer (in minutes)</label>
@@ -129,8 +148,11 @@ const AddTest = () => {
             </div>
           )}
 
+          {/* Question Listing */}
           {questions.map((q, qIndex) => (
             <div key={qIndex} className="mb-4 border rounded p-3 question-card">
+
+              {/* Question Textarea */}
               <div className="mb-3">
                 <label className="form-labeladd">Question {qIndex + 1}</label>
                 <textarea
@@ -141,6 +163,8 @@ const AddTest = () => {
                   required
                 />
               </div>
+
+              {/* Options (4 options) */}
               <div className="row">
                 {q.options.map((opt, optIndex) => (
                   <div className="col-md-6 mb-3" key={optIndex}>
@@ -158,6 +182,8 @@ const AddTest = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Correct Answer Dropdown */}
               <div className="mb-3">
                 <label className="form-labeladd">Correct Answer</label>
                 <select
@@ -177,6 +203,7 @@ const AddTest = () => {
             </div>
           ))}
 
+          {/* Buttons: Add Question & Submit */}
           <div className="button-containers">
             <button
               type="button"
@@ -186,6 +213,7 @@ const AddTest = () => {
             >
               Add Question
             </button>
+
             <button
               type="submit"
               className="btn btn-outline-success submit-test-btn"

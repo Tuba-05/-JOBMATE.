@@ -1,0 +1,179 @@
+.add-test-container {
+  background: linear-gradient(135deg, #333, #000);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.neumorphism-card {
+  background: #282828;
+  border-radius: 20px;
+  box-shadow: 20px 20px 30px #000, -20px -20px 30px #444;
+  padding: 40px;
+  width: 100%;
+  max-width: 800px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.neumorphism-card h1 {
+  color: #fff;
+}
+
+.neumorphic-input {
+  border: none;
+  background: #282828;
+  color: #fff;
+  padding: 12px 15px;
+  border-radius: 12px;
+  box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.6), -8px -8px 15px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.neumorphic-input:focus {
+  color: white;
+  background: #333;
+  box-shadow: 0 0 10px rgba(0, 204, 204, 0.8);
+}
+
+.neumorphic-input option {
+  color: #000; /* Option text color */
+  background-color: #fff; /* Option background color */
+}
+.neumorphic-input::placeholder {
+  color: rgba(255, 255, 255, 0.8); /* Lighter placeholder text */
+  opacity: 1;
+}
+
+.neumorphic-input:focus::placeholder {
+  color: rgba(118, 199, 192, 0.8); /* Placeholder color on focus */
+}
+
+.question-card {
+  background: #282828;
+  box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.6), -6px -6px 12px rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.question-card:hover {
+  transform: scale(1.05);
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.7), -10px -10px 20px rgba(255, 255, 255, 0.1);
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 100%;
+  background: #444;
+  border-radius: 10px;
+}
+
+.progress {
+  height: 100%;
+  background: rgba(118, 199, 192, 0.8);
+  transition: width 0.3s ease;
+  border-radius: 10px;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  color: white;
+  font-weight: 500;
+}
+.add-question-btn,
+.submit-test-btn {
+  border-radius: 50px;
+  padding: 12px 25px;
+  font-weight: bold;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  white-space: nowrap;
+  
+}
+.add-question-btn:hover {
+  background: #007bff;
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+.submit-test-btn:hover {
+  background: #28a745;
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+.form-labeladd {
+  color: #fff;
+}
+
+input,
+select,
+textarea {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+[title] {
+  position: relative;
+  cursor: help;
+}
+
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -25px;
+  left: 0;
+  background: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8em;
+  white-space: nowrap;
+}
+
+.button-containers {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 900px;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.button-containers .btn {
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.form-check-label {
+  color: #fff;
+  padding-left: 10px;
+  font-weight: 400;
+}

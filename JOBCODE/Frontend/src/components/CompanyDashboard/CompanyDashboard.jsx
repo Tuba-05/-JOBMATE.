@@ -4,7 +4,6 @@ import './CompanyDashboard.css';
 
 const CompanyDashboard = () => {
   const [showForm, setShowForm] = useState(false);
-
   const handleAddVacancyClick = () => {
     setShowForm(!showForm);
   };
@@ -18,12 +17,10 @@ const CompanyDashboard = () => {
 
         {/* Button Container for Flex Layout */}
         <div className="button-containerboth">
-        <button
-          className="leader-dashboard-btn">
-        Scoreboard
-        </button>
-
-
+          <button
+            className="leader-dashboard-btn">
+          Scoreboard
+          </button>
           <button
             onClick={handleAddVacancyClick}
             className="add-vacancy-btn"

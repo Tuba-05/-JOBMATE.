@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 const VacancyForm = () => {
   const navigate = useNavigate();  // Initialize navigate inside the component
-
   const [vacancyData, setVacancyData] = useState({
     title: "",
     requiredSkills: "",

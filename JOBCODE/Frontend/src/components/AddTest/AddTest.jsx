@@ -64,10 +64,14 @@ const AddTest = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(testData),
       });
-      const testResult = await response.json();
-      
-      alert("Test added successfully!");
+      const test_data = await response.json();
 
+      if (test_data.success){
+        alert("Test added successfully!");
+      }
+      else{
+        alert("Error adding test : (");
+      }
       // Reset form
       setTestTitle("");
       setQuestions([{ question: "", options: ["", "", "", ""], correctAnswer: "" }]);

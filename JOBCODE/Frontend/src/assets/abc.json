@@ -1,0 +1,100 @@
+{
+    "contact_information": {
+      "full_name": "John Doe",
+      "location": {
+        "city": "New York",
+        "state": "NY",
+        "country": "USA"
+      },
+      "email": "johndoe@example.com",
+      "phone": "+1-555-123-4567",
+      "linkedin": "linkedin.com/in/johndoe",
+      "github": "github.com/johndoe"
+    },
+    "professional_summary": "Detail-oriented software engineer with over 5 years of experience in full-stack development. Proficient in JavaScript, Python, and SQL, with a strong focus on building scalable applications and improving user experience.",
+    "experience": [
+      {
+        "job_title": "Senior Software Engineer",
+        "company": "Tech Solutions Inc.",
+        "location": {
+          "city": "New York",
+          "state": "NY"
+        },
+        "start_date": "2021-01-01",
+        "end_date": "Present",
+        "achievements": [
+          "Led a team of 5 developers to design and implement a real-time analytics platform, increasing client satisfaction by 20%.",
+          "Collaborated with cross-functional teams to define and meet project milestones on time.",
+          "Mentored junior developers, contributing to a 15% improvement in team performance."
+        ]
+      },
+      {
+        "job_title": "Software Engineer",
+        "company": "Web Innovations LLC",
+        "location": {
+          "city": "New York",
+          "state": "NY"
+        },
+        "start_date": "2018-06-01",
+        "end_date": "2020-12-31",
+        "achievements": [
+          "Developed and maintained RESTful APIs, reducing response times by 30%.",
+          "Worked with UX/UI designers to enhance the user interface, leading to a 25% increase in user engagement.",
+          "Contributed to Agile sprint planning, improving project efficiency and team coordination."
+        ]
+      }
+    ],
+    "education": [
+      {
+        "degree": "Bachelor of Science in Computer Science",
+        "institution": "New York University",
+        "location": {
+          "city": "New York",
+          "state": "NY"
+        },
+        "graduation_date": "2018-05-15"
+      }
+    ],
+    "skills": {
+      "technical_skills": [
+        "JavaScript", 
+        "Python", 
+        "React", 
+        "Node.js", 
+        "SQL", 
+        "Git", 
+        "Agile Development"
+      ],
+      "soft_skills": [
+        "Problem Solving",
+        "Team Collaboration",
+        "Project Management",
+        "Communication"
+      ]
+    },
+    "certifications": [
+      {
+        "title": "Certified Scrum Master",
+        "institution": "Scrum Alliance",
+        "issue_date": "2020-03-01"
+      }
+    ],
+    "languages": [
+      {
+        "language": "English",
+        "proficiency": "Native"
+      },
+      {
+        "language": "Spanish",
+        "proficiency": "Conversational"
+      }
+    ],
+    "projects": [
+      {
+        "project_name": "Real-Time Analytics Platform",
+        "description": "Developed a scalable platform for real-time data analysis, integrating APIs and databases to support live dashboards.",
+        "technologies_used": ["Python", "SQL", "JavaScript"],
+        "role": "Lead Developer"
+      }
+    ]
+  }

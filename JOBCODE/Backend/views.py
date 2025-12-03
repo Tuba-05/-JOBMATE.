@@ -3,9 +3,9 @@
 from .models import CustomUser, Company, Candidate
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser # for upload files & to parse data from file 
 from django.contrib.auth.hashers import (make_password, check_password, )  # for hash password
-from firebase_config import bucket
+from supabase_client import supabase
 import uuid  # Universally Unique Identifier, generates a 128-bit unique value(string)
 
 
@@ -17,15 +17,15 @@ def register(request):
         return Response({"error": "Invalid request method"}, status=400)
 
     try:
-        registerUser_data = request.data
-        username = registerUser_data.get("username")
-        email = registerUser_data.get("email")
-        password = registerUser_data.get("password")
+        registeredUser_data = request.data
+        username = registeredUser_data.get("username")
+        email = registeredUser_data.get("email")
+        password = registeredUser_data.get("password")
         hashed_password = make_password(password)  # making password hashed
 
         if not CustomUser.objects.filter(email=email).exists():
 
-            if registerUser_data.get("isHiringDeskMode"):  # Company mode
+            if registeredUser_data.get("isHiringDeskMode"):  # Company mode
                 user = CustomUser.objects.create(
                     username=username,
                     email=email,
@@ -35,9 +35,9 @@ def register(request):
 
                 Company.objects.create(
                     user=user,
-                    address=registerUser_data.get("companyAddress"),
-                    contact=registerUser_data.get("contactNumber"),
-                    website=registerUser_data.get("companyWebsite"),
+                    address=registeredUser_data.get("companyAddress"),
+                    contact=registeredUser_data.get("contactNumber"),
+                    website=registeredUser_data.get("companyWebsite"),
                 )
 
             else:  # Candidate mode
@@ -52,20 +52,12 @@ def register(request):
                     user=user,
                 )
 
-            # sending sy=uccessful response
-            return Response(
-                {
-                    "success": True,
-                    "message": "Record added successfully.",
-                    "user_id": user.id,
-                },
-                status=201,
-            )
+            # sending successful response
+            return Response({"success": True, "message": "Record added successfully.", "user_id": user.id,}
+                            , status=201)
 
         else:
-            return Response(
-                {"success": False, "message": "Record already exists"}, status=400
-            )
+            return Response({"success": False, "message": "Record already exists"}, status=400)
 
     except Exception as e:
         return Response({"success": False, "message": str(e)})
@@ -76,9 +68,9 @@ def login(request):
     """ function takes user inputs for logged in """
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
-    loginUser_data = request.data
-    email = loginUser_data.get("email")
-    password = loginUser_data.get("password")
+    loginedUser_data = request.data
+    email = loginedUser_data.get("email")
+    password = loginedUser_data.get("password")
     try:
         user = CustomUser.objects.get(email=email)
     except CustomUser.DoesNotExist:
@@ -98,7 +90,6 @@ def login(request):
                     "user_id": user.id,},status=201)
         
 
-
 @api_view(["POST"])
 def check_resume(request):
     """ function checks whether the user candidate uploaded his resume or not"""
@@ -110,60 +101,83 @@ def check_resume(request):
         user_id = user_data.get("UserId")
         try:
             candidate = Candidate.objects.get(user_id=user_id)
+            if not candidate.resume_link:
+                print("Resume not found")
+                return Response({"success": False, "message": "Resume not found", "user_id": user_id,}, status=404)
+            else:
+                print("Resume already uploaded")
+                return Response({"success": True, "message": "Resume already uploaded", "user_id": user_id,}, status=200)
+        
         except Candidate.DoesNotExist:
             print("Candidate not found")
             return Response({"success": False, "message": "Candidate not found"}, status=404)
-
-        if not candidate.resume_link:
-            print("Resume not found")
-            return Response({"success": False, "message": "Resume not found"}, status=404)
-        else:
-            print("Resume already uploaded")
-            return Response({"success": True, "message": "Resume already uploaded"}, status=200)
-
-
+        
 
 @api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser])
 def upload_resume(request):
-    """ function takes user id & resume to store in DB in URL form """
+    """ function takes user id & parse resume to store in DB in URL form """
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
 
-    user_id = request.POST.get("user_id")
-    file = request.FILES.get("resume")
+    user_data = request.data
+    user_id = user_data.get("UserId")
+    file = user_data.get("resume")
 
     if not file:  # if file not found
         return Response({"error": "No file uploaded"}, status=404)
-
     # Unique filename
     file_extension = file.name.split(".")[-1]
     file_name = f"user_{user_id}_{uuid.uuid4()}.{file_extension}"
+    file_content = file.read()          # convert to bytes
 
-    blob = bucket.blob(file_name)  # Create a blob in Firebase
-    blob.upload_from_file(file, content_type=file.content_type)  # Upload the file
-    blob.make_public()  # Makes link publicly viewable
+    try:  # Upload file to Supabase Storage (bucket 'resumes' must exist)
+        # Upload file to Supabase bucket
+        file_saved_in_bucket = supabase.storage.from_("resumes").upload(
+            file_name,
+            file_content,
+            file_options={"content-type": file.content_type}
+        )
+        # Make file URL public
+        # file_url = supabase.storage.from_("resumes").get_public_url(file_name)['public_url']
+    
+    except Exception as e:
+        print("Supabase upload error:", e)
+        return Response({"success": False, "message": str(e)}, status=500)
 
-    file_url = blob.public_url  # generates the full URL to access the file.
-    print(file_url)
-
-    try:
+    try:  # saving resume url in Candidate DB
         candidate = Candidate.objects.get(user_id=user_id)
-        candidate.resume_link = file_url
+        candidate.resume_link = file_name
         candidate.save()
         print("Resume uploaded successfully")
-        return Response({"success": True, "message": "Resume uploaded successfully!", "url": file_url}, status=201)
+        return Response({"success": True, "message": "Resume uploaded successfully!", "user_id": user_id,
+                        }, status=201)
+
     except Candidate.DoesNotExist:
         print("Candidate not found")
         return Response({"success": False, "message": "Candidate not found"}, status=404)
 
 
 @api_view(['POST'])
-@parser_classes([MultiPartParser, FormParser])
-def parse_resume_info(request):
-    """ function parse user info from resume & send it to frontend """
+def display_profile_info(request):
+    """ function send user's public resume link for frontend display"""
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
-    ...
+    
+    user_id = request.data.get('UserId')
+    try: # if candidate exists
+        candidate = Candidate.objects.get(user_id= user_id)
+        if candidate.resume_link:
+            # Generate a signed URL valid for 1 hour
+            signed_url = supabase.storage.from_('resumes').create_signed_url(candidate.resume_link, 3600)
+            if signed_url: print("success")
+            
+            return Response({"success": True, "message": "Profile info uploaded successfully!", "user_id": user_id,
+                        "resume_url": signed_url}, status=201)
+        
+    except Candidate.DoesNotExist:
+        print("Candidate not found")
+        return Response({"success": False, "message": "Candidate not found"}, status=404)
 
 @api_view(['POST'])
 def add_job(request):

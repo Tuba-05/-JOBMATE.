@@ -1,1 +1,11 @@
+# not used
 firebase-key.json
+
+# used
+# *** Python ***
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/

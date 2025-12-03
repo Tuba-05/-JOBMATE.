@@ -23,6 +23,7 @@ class Candidate(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
 class Company(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE) # ← UNIQUE / acts as an id
     address = models.TextField(max_length=300, null=True, blank=True)
@@ -30,6 +31,7 @@ class Company(models.Model):
     website = models.URLField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
 
 class JobVacancies(models.Model):
     job_id = models.AutoField(primary_key=True)

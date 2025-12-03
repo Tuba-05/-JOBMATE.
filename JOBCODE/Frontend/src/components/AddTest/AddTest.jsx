@@ -79,7 +79,7 @@ const AddTest = () => {
       setTimer("");
     } 
     catch (error) {
-      alert("Failed to submit test. Please try again.");
+      alert("Failed to submit test. Please try again.", error);
     }
   };
 

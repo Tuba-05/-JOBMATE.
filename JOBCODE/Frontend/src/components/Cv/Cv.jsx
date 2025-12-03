@@ -34,7 +34,10 @@ function Cv() {
         "application/msword", // DOC
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
         "application/vnd.oasis.opendocument.text", // ODT
+        "text/html",  // HTML
+        "application/xhtml+xml", // XHTML
         ];
+
         if (!allowedTypes.includes(file.type)) {
         // if file type invalid
         alert("Invalid file type! Please upload PDF, DOC, DOCX or ODT.");
@@ -48,7 +51,7 @@ function Cv() {
         setMsg1("Uploading...");
         setProgress((prevState) => ({ ...prevState, started: true, pc: 0 }));
         setShowButton(false);
-        fd.append("user_id", localStorage.getItem("UserId")); // user id
+        fd.append("UserId", localStorage.getItem("UserId")); // user id
         fd.append("resume", file); // file
 
         axios.post("http://127.0.0.1:8000/api/upload-resume/", fd, {
@@ -64,8 +67,9 @@ function Cv() {
         })
         .then((res) => {
             if (res.data.success) {
-                const uploadedFileUrl = res.data.resume_url; // <-- This is your resume link
-                console.log("Uploaded Resume URL:", uploadedFileUrl);
+                const uploadedFileUrl = res.data.resume_url; // user's resume link
+                localStorage.setItem("UserId", res.data.user_id); // Save User ID for later usage
+                console.log(res.data.message);
 
                 setMsg1("Upload Successful");
                 setIcon(

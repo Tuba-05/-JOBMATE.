@@ -92,8 +92,7 @@ function LogSign() {
         if (data.success) {
           console.log("Logged in:", email);
           if (data.role === "candidate") {
-            const cv_response = await fetch(
-              "http://127.0.0.1:8000/api/check-resume/",
+            const cv_response = await fetch("http://127.0.0.1:8000/api/check-resume/",
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -105,8 +104,10 @@ function LogSign() {
             );
             const cv_data = await cv_response.json();
             if (cv_data.success) {
+              localStorage.setItem("UserId", cv_data.user_id);
               navigate("/Pf");
             } else {
+              localStorage.setItem("UserId", cv_data.user_id);
               navigate("/cv");
             }
           } else {

@@ -50,20 +50,18 @@ const ProfileForm = () => {
         <>
         {/* 
 for open in new tab:-
-<a href={user.resume_url} target="_blank">View Resume</a>
+<a href={URL} target="_blank">View Resume</a>
         */}
+        <div className="profile_row"> 
         <div className="profile_body">
-            <div className="profileForm-resume">
-                <h1 className="profileForm-title">Profile Information</h1>
             {URL ? (
             <iframe src={URL} width="100%" height="600px"></iframe>
             ) : (
             <p>No resume uploaded yet :( </p>
             )}
             </div>
-
             <div className="profileForm-buttonContainer">
-                <button className="profileForm-leftButton" onClick={handleFindJobs}>See Results For JOB</button>
+                <button className="profileForm-leftButton" onClick={handleFindJobs}>See Results <br /> For JOB</button>
             </div>
         </div>
         </>

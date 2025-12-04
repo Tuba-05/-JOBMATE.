@@ -167,13 +167,20 @@ def display_profile_info(request):
     user_id = request.data.get('UserId')
     try: # if candidate exists
         candidate = Candidate.objects.get(user_id= user_id)
-        if candidate.resume_link:
-            # Generate a signed URL valid for 1 hour
-            signed_url = supabase.storage.from_('resumes').create_signed_url(candidate.resume_link, 3600)
-            if signed_url: print("success")
-            
-            return Response({"success": True, "message": "Profile info uploaded successfully!", "user_id": user_id,
-                        "resume_url": signed_url}, status=201)
+        if not candidate.resume_link:
+            return Response({"success": False, "message": "No resume uploaded"}, status=404)
+
+        # Generate signed URL valid for 1 hour
+        signed_data = supabase.storage.from_("resumes").create_signed_url(candidate.resume_link, 3600)
+
+        if not signed_data or "signedURL" not in signed_data:
+            return Response({"success": False, "message": "Failed to generate signed URL"}, status=500)
+
+        signed_url = signed_data["signedURL"]
+        print("Signed URL:", signed_url)
+
+        return Response({"success": True, "message": "Profile info fetched", "user_id": user_id, "resume_url": signed_url  # Send STRING only
+                         }, status=200)
         
     except Candidate.DoesNotExist:
         print("Candidate not found")

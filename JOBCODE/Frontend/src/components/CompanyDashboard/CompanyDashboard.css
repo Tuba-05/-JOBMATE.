@@ -2,42 +2,45 @@
 .dashboard-3d-container {
   background: url('https://images.pexels.com/photos/5992498/pexels-photo-5992498.jpeg?auto=compress&cs=tinysrgb&w=600') center/cover no-repeat;
   position: relative;
-  min-height: 95vh;
-  padding: 10px;
-  margin-left: -170px;
-  margin-top: 20px;
-  /* margin-bottom: 14px; */
-  width: 220%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 70vh;
+  max-height: 65%;
+  padding: 50px;
+  display: block;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 1200px;
   overflow: hidden;
   border: 2.5px solid #20dcc3;
   border-radius: 5px;
   box-sizing: border-box;
   box-shadow: hsl(309, 100%, 71%);  
-  position: static;
 }
+/* 🟢 New Style: When form is CLOSED (Default) */
+.dashboard-3d-container.form-closed {
+  margin-top: 100px; /* Your desired 100px margin */
+}
+
+/* 🟢 New Style: When form is OPEN */
+.dashboard-3d-container.form-open {
+  margin-top: 650px; /* Your desired 650px margin */
+}
+
 .dashboard-3d-container::before {
   content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.2); /* Add a dark overlay */
-  z-index: 1; /* Make sure this layer is behind the form */
+  z-index: -1; /* Make sure this layer is behind the form */
 }
 .dashboard-3d-container::after {
   /* Semi-transparent overlay to dim the background */
   content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
   height: 100%;
   background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
-  z-index: 1;
+  z-index: -1;
 }
 
 /* Dashboard Container with 3D Shadow and Layered Effect */
@@ -46,14 +49,20 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.7), 0px 10px 10px rgba(255, 255, 255, 0.1);
-  padding: 40px;
+  padding: 20px;
+  margin: auto;
   border-radius: 15px;
-  max-width: 800px;
+  max-width: 900px;
+  min-width: 500px;
   width: 100%;
+  min-height: 40vh ;
+  /* height: 100%; */
   transform-style: preserve-3d;
   transform: rotateX(5deg) rotateY(-5deg);
   transition: transform 0.5s ease;
+  position: relative;
   z-index: 2;
+  /* scroll-behavior: smooth; */
 }
 
 .dashboard-container:hover {
@@ -133,6 +142,7 @@
   animation: slideIn 0.5s ease forwards;
   transform-style: preserve-3d;
   z-index: 2;
+  position: relative;
 }
 
 @keyframes slideIn {

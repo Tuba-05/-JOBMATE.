@@ -1,10 +1,7 @@
 /* Form Container */
-body.form-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 7rem; /* Increased padding for better layout */
-  margin: 7rem auto 2rem; /* Increased margin */
+.form-container {
+  padding: 2rem; /* Increased padding for better layout */
+  margin: 2rem auto 2rem; /* Increased margin */
   border-radius: 12px;
   background: linear-gradient(
     135deg,
@@ -13,11 +10,11 @@ body.form-container {
   ); /* Subtle gradient for depth */
   backdrop-filter: blur(6px); /* Slightly increased blur for a cleaner look */
   box-shadow: 0px 4px 20px rgba(5, 112, 97, 0.4); /* Enhanced shadow for depth */
-  width: 90%;
-  max-width: 500px;
+  width: 100%;
+  max-width: 800px;
   border: 1px solid rgba(255, 255, 255, 0.25); /* Subtle border */
   animation: fadeIn 1s ease-in;
-  position: absolute;
+  /* position: absolute; */
 }
 
 .form-container:hover {

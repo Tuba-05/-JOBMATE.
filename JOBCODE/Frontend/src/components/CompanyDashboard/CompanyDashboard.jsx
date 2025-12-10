@@ -7,9 +7,11 @@ const CompanyDashboard = () => {
   const handleAddVacancyClick = () => {
     setShowForm(!showForm);
   };
+  // Add this line to define dynamic classes
+  const dashboardClasses = `dashboard-3d-container ${showForm ? 'form-open' : 'form-closed'}`;
 
   return (
-    <div className="dashboard-3d-container">
+    <div className={dashboardClasses}>
       <div className="dashboard-container">
         <header className="dashboard-header">
           <h1 className="dashboard-title">TalentHub</h1>

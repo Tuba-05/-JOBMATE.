@@ -187,7 +187,7 @@ def display_profile_info(request):
         return Response({"success": False, "message": "Candidate not found"}, status=404)
 
 @api_view(['POST'])
-def add_job(request):
+def add_vacancy(request):
     """ function stores job vacancies in DB from frontend"""
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)

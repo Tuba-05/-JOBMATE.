@@ -63,6 +63,7 @@ const VacancyForm = () => {
     <div className="form-container">
       <h3 className="form-title">Add a New Vacancy</h3>
       <form onSubmit={handleFormSubmit} className="vacancy-form">
+        {/* Job Title */}
         <label className="form-label">
           <span className={`floating-label ${vacancyData.title ? "filled" : ""}`}>
             Job Title
@@ -77,7 +78,7 @@ const VacancyForm = () => {
             className="form-input"
           />
         </label>
-
+        {/* Skills Required */}
         <label className="form-label">
           <span className={`floating-label ${vacancyData.requiredSkills ? "filled" : ""}`}>
             Skills Required
@@ -92,7 +93,7 @@ const VacancyForm = () => {
             className="form-input"
           />
         </label>
-
+        {/* Level of Experience */}
         <label className="form-label">
           <span className={`floating-label ${vacancyData.levelOfExperience ? "filled" : ""}`}>
             Level of Experience
@@ -111,7 +112,14 @@ const VacancyForm = () => {
             <option value="Expert-Level">Expert-Level</option>
           </select>
         </label>
-
+        {/* Additional Requirements */}
+        {/* <ul>
+              {vacancyData.additionalRequirements
+                .split("\n")
+                .map((req, index) => (
+                  <li key={index}>{req}</li>
+                ))}
+            </ul> */}
         <label className="form-label">
           <span className={`floating-label ${vacancyData.additionalRequirements ? "filled" : ""}`}>
             Additional Requirements
@@ -124,7 +132,36 @@ const VacancyForm = () => {
             className="form-textarea"
           />
         </label>
-
+        {/* Location */}
+        <label className="form-label">
+          <span className={`floating-label ${vacancyData.location ? "filled" : ""}`}>
+            Location
+          </span>
+          <input
+            type="text"
+            name="location"
+            value={vacancyData.location}
+            onChange={handleInputChange}
+            required
+            placeholder="e.g., Karachi, Pakistan"
+            className="form-input"
+          />
+        </label>
+        {/* Timing */}
+        <label className="form-label">
+          <span className={`floating-label ${vacancyData.timing ? "filled" : ""}`}>
+            Timing
+          </span>
+          <input
+            type="text"
+            name="timing"
+            value={vacancyData.timing}
+            onChange={handleInputChange}
+            required
+            placeholder="e.g., 9:00 AM - 5:00 PM (Mon-Fri)"
+            className="form-input"
+          />
+        </label>
         <button
           type="submit"
           className="submit-btn"

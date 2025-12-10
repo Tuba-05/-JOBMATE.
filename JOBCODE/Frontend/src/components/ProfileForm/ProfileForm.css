@@ -1,5 +1,5 @@
 /* Container for the whole profile section */
-.profile_row {
+body.profile_row {
     display: flex;
     flex-direction: row;
     gap: 50px;

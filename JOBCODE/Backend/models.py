@@ -35,7 +35,7 @@ class Company(models.Model):
 
 class JobVacancies(models.Model):
     job_id = models.AutoField(primary_key=True)
-    candidates_applied = models.ManyToManyField(Candidate, related_name="applied_jobs")
+    candidates_applied = models.ManyToManyField(Candidate, related_name="applied_jobs", null=True, blank=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     job_title = models.TextField(null=True, blank=True)
     skills_required = models.TextField(null=True, blank=True)

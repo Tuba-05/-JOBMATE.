@@ -205,7 +205,7 @@ def add_vacancy(request):
         company = Company.objects.get(user_id=CompanyId)
         if company:
             JobVacancies.objects.create(
-                company_id = company.id,
+                company = company,
                 job_title=job_title,
                 skills_required=job_skillsRequired,
                 level_of_experience=job_levelOfExperience,
@@ -220,5 +220,9 @@ def add_vacancy(request):
         print("Company not found")
         return Response({"success": False, "message": "Company not found"}, status=404)        
             
-    return Response({})
 
+@api_view(['POST'])
+def test_scores(request):
+    """ function stores job vacancies in DB from frontend"""
+    if request.method != "POST":  # invalid http method
+        return Response({"error": "Invalid request method"}, status=400)

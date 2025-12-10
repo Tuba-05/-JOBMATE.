@@ -58,7 +58,6 @@ const AddTest = () => {
     };
 
     try {
-      // await storeTestData(testData); // Firestore store function
         const response = await fetch("http://127.0.0.1:8000/api/test-scores/",{
         method: "POST",
         headers: { "Content-Type": "application/json" },

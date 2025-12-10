@@ -4,6 +4,7 @@ import './CompanyDashboard.css';
 
 const CompanyDashboard = () => {
   const [showForm, setShowForm] = useState(false);
+  const compUser = localStorage.getItem("UserId");
   const handleAddVacancyClick = () => {
     setShowForm(!showForm);
   };
@@ -11,6 +12,7 @@ const CompanyDashboard = () => {
   const dashboardClasses = `dashboard-3d-container ${showForm ? 'form-open' : 'form-closed'}`;
 
   return (
+    // using the dynamic classes here
     <div className={dashboardClasses}>
       <div className="dashboard-container">
         <header className="dashboard-header">
@@ -34,6 +36,7 @@ const CompanyDashboard = () => {
 
         {showForm && (
           <div className="vacancy-form-container">
+            
             <VacancyForm />
           </div>
         )}

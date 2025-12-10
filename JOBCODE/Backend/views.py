@@ -1,6 +1,6 @@
 # from django.http import JsonResponse
 # from django.views.decorators.csrf import csrf_exempt
-from .models import CustomUser, Company, Candidate
+from .models import CustomUser, Company, Candidate, JobVacancies, CompanyTests, TestScores
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser # for upload files & to parse data from file 
@@ -98,15 +98,15 @@ def check_resume(request):
 
     user_data = request.data
     if user_data.get("role") == "candidate":
-        user_id = user_data.get("UserId")
+        candidate_id = user_data.get("UserId")
         try:
-            candidate = Candidate.objects.get(user_id=user_id)
+            candidate = Candidate.objects.get(user_id=candidate_id)
             if not candidate.resume_link:
                 print("Resume not found")
-                return Response({"success": False, "message": "Resume not found", "user_id": user_id,}, status=404)
+                return Response({"success": False, "message": "Resume not found", "user_id": candidate_id,}, status=404)
             else:
                 print("Resume already uploaded")
-                return Response({"success": True, "message": "Resume already uploaded", "user_id": user_id,}, status=200)
+                return Response({"success": True, "message": "Resume already uploaded", "user_id": candidate_id,}, status=200)
         
         except Candidate.DoesNotExist:
             print("Candidate not found")
@@ -121,14 +121,14 @@ def upload_resume(request):
         return Response({"error": "Invalid request method"}, status=400)
 
     user_data = request.data
-    user_id = user_data.get("UserId")
+    candidate_id = user_data.get("UserId")
     file = user_data.get("resume")
 
     if not file:  # if file not found
         return Response({"error": "No file uploaded"}, status=404)
     # Unique filename
     file_extension = file.name.split(".")[-1]
-    file_name = f"user_{user_id}_{uuid.uuid4()}.{file_extension}"
+    file_name = f"user_{candidate_id}_{uuid.uuid4()}.{file_extension}"
     file_content = file.read()          # convert to bytes
 
     try:  # Upload file to Supabase Storage (bucket 'resumes' must exist)
@@ -146,11 +146,11 @@ def upload_resume(request):
         return Response({"success": False, "message": str(e)}, status=500)
 
     try:  # saving resume url in Candidate DB
-        candidate = Candidate.objects.get(user_id=user_id)
+        candidate = Candidate.objects.get(user_id=candidate_id)
         candidate.resume_link = file_name
         candidate.save()
         print("Resume uploaded successfully")
-        return Response({"success": True, "message": "Resume uploaded successfully!", "user_id": user_id,
+        return Response({"success": True, "message": "Resume uploaded successfully!", "user_id": candidate_id,
                         }, status=201)
 
     except Candidate.DoesNotExist:
@@ -164,9 +164,9 @@ def display_profile_info(request):
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
     
-    user_id = request.data.get('UserId')
+    candidate_id = request.data.get('UserId')
     try: # if candidate exists
-        candidate = Candidate.objects.get(user_id= user_id)
+        candidate = Candidate.objects.get(user_id= candidate_id)
         if not candidate.resume_link:
             return Response({"success": False, "message": "No resume uploaded"}, status=404)
 
@@ -179,7 +179,7 @@ def display_profile_info(request):
         signed_url = signed_data["signedURL"]
         print("Signed URL:", signed_url)
 
-        return Response({"success": True, "message": "Profile info fetched", "user_id": user_id, "resume_url": signed_url  # Send STRING only
+        return Response({"success": True, "message": "Profile info fetched", "user_id": candidate_id, "resume_url": signed_url  # Send STRING only
                          }, status=200)
         
     except Candidate.DoesNotExist:
@@ -193,6 +193,7 @@ def add_vacancy(request):
         return Response({"error": "Invalid request method"}, status=400)
 
     jobVacancy_data = request.data
+    CompanyId = jobVacancy_data.get("companyId")
     job_title = jobVacancy_data.get("title")
     job_skillsRequired = jobVacancy_data.get("requiredSkills")
     job_levelOfExperience = jobVacancy_data.get("levelOfExperience")
@@ -200,5 +201,24 @@ def add_vacancy(request):
     job_location = jobVacancy_data.get("location")
     job_timing = jobVacancy_data.get("timing")
 
+    try:
+        company = Company.objects.get(user_id=CompanyId)
+        if company:
+            JobVacancies.objects.create(
+                company_id = company.id,
+                job_title=job_title,
+                skills_required=job_skillsRequired,
+                level_of_experience=job_levelOfExperience,
+                additional_requirements=job_additionalRequirements,
+                location=job_location,
+                timings=job_timing,
+            )
+            print("Job vacancy added successfully")
+            return Response({"success": True, "message": "Job vacancy added successfully."}, status=201)
+
+    except Company.DoesNotExist:
+        print("Company not found")
+        return Response({"success": False, "message": "Company not found"}, status=404)        
+            
     return Response({})
 

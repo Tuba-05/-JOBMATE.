@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const VacancyForm = () => {
   const navigate = useNavigate();  // Initialize navigate inside the component
+  const compUser = localStorage.getItem("UserId");
   const [vacancyData, setVacancyData] = useState({
     title: "",
     requiredSkills: "",
@@ -18,14 +19,11 @@ const VacancyForm = () => {
   const handleInputChange = (e) => {
     setVacancyData({ ...vacancyData, [e.target.name]: e.target.value });
   };
-
-  // Save to Firebase
-  // const AddVacancy = async (data) => {
-  //   const database = getDatabase();
-  //   const vacancyRef = ref(database, "Jobs"); // Path to Jobs in Firebase
-  //   await push(vacancyRef, data); // Push data with auto-generated key
-  // };
-
+  
+  const dataToSend = {
+    companyId: compUser,
+    ...vacancyData
+  }
   // Handle form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +32,7 @@ const VacancyForm = () => {
       const response = await fetch("http://127.0.0.1:8000/api/add-job-vacancy/",{
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(vacancyData),
+        body: JSON.stringify(dataToSend),
       }); 
       const vacancyResponse = await response.json();
       if (vacancyResponse. success){

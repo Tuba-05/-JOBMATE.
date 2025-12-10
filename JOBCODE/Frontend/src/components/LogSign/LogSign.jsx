@@ -104,13 +104,14 @@ function LogSign() {
             );
             const cv_data = await cv_response.json();
             if (cv_data.success) {
-              localStorage.setItem("UserId", cv_data.user_id);
+              localStorage.setItem("UserId", cv_data.user_id); // candidate user
               navigate("/Pf");
             } else {
-              localStorage.setItem("UserId", cv_data.user_id);
+              localStorage.setItem("UserId", cv_data.user_id); // candidate user
               navigate("/cv");
             }
           } else {
+            localStorage.setItem("UserId", data.user_id); // company user
             navigate("/company-dashboard");
           }
         } else {

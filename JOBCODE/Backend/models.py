@@ -2,49 +2,55 @@ from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 
+# Custom User → Candidate/ Company → JobVacancies → CompanyTests → TestScores
+# TestScores → Candidate & TestScores → CompanyTests → JobVacancies → Company.
+
+
 class CustomUser(models.Model):
-    username = models.CharField(max_length=50, null=False)
-    email = models.EmailField(unique=True)       # ← UNIQUE
-    password = models.CharField(max_length=200, null=False)
+    username = models.CharField(max_length=50, null=False, blank=False)
+    email = models.EmailField(unique=True,)       # ← UNIQUE
+    password = models.CharField(max_length=200, null=False, blank=False)
     ROLE_CHOICES = [
         ("candidate", "Candidate"),
         ("company", "Company"),
     ]
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, null=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True,)
+    updated_at = models.DateTimeField(auto_now=True, )
 
 class Candidate(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE) # ← UNIQUE / acts as an id
-    profession = models.CharField(max_length=50, null=True, blank=True)
-    experience = models.CharField(max_length=10, null=True, blank=True)
-    skills = models.TextField(max_length=100, null=True, blank=True)
-    resume_link = models.URLField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    # PK is assigned default by Django as 'id'
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE) # ← UNIQUE / acts as user_id
+    profession = models.CharField(max_length=50, null=True, blank=True) # optional
+    experience = models.CharField(max_length=10, null=True, blank=True) # optional
+    skills = models.TextField(max_length=100, null=True, blank=True) # optional
+    resume_link = models.URLField(null=True, blank=True) # optional
+    created_at = models.DateTimeField(auto_now_add=True,)
+    updated_at = models.DateTimeField(auto_now=True,)
 
 
 class Company(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE) # ← UNIQUE / acts as an id
-    address = models.TextField(max_length=300, null=True, blank=True)
-    contact = models.CharField(max_length=20, null=True, blank=True)
-    website = models.URLField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    # PK is assigned default by Django as 'id'
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE) # ← UNIQUE / acts as  user_id
+    address = models.TextField(max_length=300, null=False, blank=False) # must 
+    contact = models.CharField(max_length=20, null=False, blank=False) # must 
+    website = models.URLField(null=False, blank=False) # must
+    created_at = models.DateTimeField(auto_now_add=True, )
+    updated_at = models.DateTimeField(auto_now=True, )
 
 
 class JobVacancies(models.Model):
-    job_id = models.AutoField(primary_key=True)
-    candidates_applied = models.ManyToManyField(Candidate, related_name="applied_jobs", null=True, blank=True)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    job_title = models.TextField(null=True, blank=True)
-    skills_required = models.TextField(null=True, blank=True)
-    level_of_experience = models.TextField(null=True, blank=True)
-    additional_requirements = models.TextField(null=True, blank=True)
-    location = models.TextField(null=True, blank=True)
-    timings = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    id = models.AutoField(primary_key=True) # job id
+    candidates_applied = models.ManyToManyField(Candidate, related_name="applied_jobs",) # list of candidate ids
+    company = models.ForeignKey(Company, on_delete=models.CASCADE) # company id
+    job_title = models.TextField(null=False, blank=False) # must
+    skills_required = models.TextField(null=False, blank=True) # must
+    level_of_experience = models.TextField(null=False, blank=False) # must
+    additional_requirements = models.TextField(null=True, blank=True) # optional
+    location = models.TextField(null=False, blank=False) # must
+    timings = models.TextField(null=False, blank=False) # must
+    created_at = models.DateTimeField(auto_now_add=True, )
+    updated_at = models.DateTimeField(auto_now=True, )
 
     class Meta:
         constraints = [
@@ -74,37 +80,36 @@ class JobVacancies(models.Model):
 
 
 class CompanyTests(models.Model):
-    test_id = models.AutoField(primary_key=True)
-    job = models.ForeignKey(JobVacancies, on_delete=models.CASCADE)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    test_title = models.TextField(null=True, blank=True)
-    test_is_timed = models.BooleanField(null=True, blank=True)
-    test_timer = models.TextField(null=True, blank=True)
-    test_questions = models.JSONField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    id = models.AutoField(primary_key=True) # test id
+    job = models.ForeignKey(JobVacancies, on_delete=models.CASCADE) # job id
+    test_title = models.CharField(null=False, blank=False, max_length=255) # test title , must
+    test_is_timed = models.BooleanField(null=True, blank=True) # test is timed or not , optional
+    test_timer = models.IntegerField(null=True, blank=True) # timer value if test is timed , optional
+    test_questions = models.JSONField(null=False, blank=False) # list of questions in JSON format , must
+    created_at = models.DateTimeField(auto_now_add=True,)
+    updated_at = models.DateTimeField(auto_now=True, )
 
     class Meta:
         constraints = [
             models.CheckConstraint(
                 check=(
-                    (Q(test_is_timed=True) & Q(test_timer__isnull=False)) |
+                    # If timed, timer must be greater than 0
+                    (Q(test_is_timed=True) & Q(test_timer__gt=0)) |
+                    # If not timed, timer must be null
                     (Q(test_is_timed=False) & Q(test_timer__isnull=True))
                 ),
-                name="check_timer_requirement"
+                name="check_timer_logic"
             )
         ]
 
 
 class TestScores(models.Model):
-    score_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(Candidate, on_delete=models.CASCADE)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    job = models.ForeignKey(JobVacancies, on_delete=models.CASCADE)
-    test = models.ForeignKey(CompanyTests, on_delete=models.CASCADE)
-    total_marks = models.IntegerField(null=True, blank=True)
-    obtained_marks = models.IntegerField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
+    id = models.AutoField(primary_key=True) # score id
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE) # user id
+    test_template = models.ForeignKey(CompanyTests, on_delete=models.CASCADE) # test id
+    test_marks = models.IntegerField(null=True, blank=True) # total marks , optional
+    test_scores = models.IntegerField(null=True, blank=True) # marks obtained , optional
+    created_at = models.DateTimeField(auto_now_add=True, )
+    updated_at = models.DateTimeField(auto_now=True,)
+
 

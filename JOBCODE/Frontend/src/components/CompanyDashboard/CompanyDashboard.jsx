@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,} from "react";
 import VacancyForm from "./AddVacancyForm"; // Assuming this is a component for adding vacancies
 import './CompanyDashboard.css';
 
@@ -10,7 +10,6 @@ const CompanyDashboard = () => {
   };
   // Add this line to define dynamic classes
   const dashboardClasses = `dashboard-3d-container ${showForm ? 'form-open' : 'form-closed'}`;
-
   return (
     // using the dynamic classes here
     <div className={dashboardClasses}>
@@ -21,10 +20,12 @@ const CompanyDashboard = () => {
 
         {/* Button Container for Flex Layout */}
         <div className="button-containerboth">
+          {/* scoreboard */}
           <button
             className="leader-dashboard-btn">
           Scoreboard
           </button>
+          {/* add vacancy */}
           <button
             onClick={handleAddVacancyClick}
             className="add-vacancy-btn"

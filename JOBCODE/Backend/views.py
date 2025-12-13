@@ -204,7 +204,7 @@ def add_vacancy(request):
     try:
         company = Company.objects.get(user_id=CompanyId)
         if company:
-            JobVacancies.objects.create(
+            job = JobVacancies.objects.create(
                 company = company,
                 job_title=job_title,
                 skills_required=job_skillsRequired,
@@ -213,8 +213,10 @@ def add_vacancy(request):
                 location=job_location,
                 timings=job_timing,
             )
+
             print("Job vacancy added successfully")
-            return Response({"success": True, "message": "Job vacancy added successfully."}, status=201)
+            return Response({"success": True, "message": "Job vacancy added successfully.",
+                            "job_id": job.id}, status=201)
 
     except Company.DoesNotExist:
         print("Company not found")
@@ -222,7 +224,31 @@ def add_vacancy(request):
             
 
 @api_view(['POST'])
-def test_scores(request):
+def add_tests(request):
     """ function stores job vacancies in DB from frontend"""
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
+    test_data = request.data
+    JobId = test_data.get("jobId")
+    test_title = test_data.get("testTitle")
+    is_timed_test = test_data.get("isTimedTest")
+    timer = test_data.get("timer") if is_timed_test else 0
+    test_questions = test_data.get("questions")  # JSON format
+
+    try:
+        job = JobVacancies.objects.get(id = JobId)
+        if job:
+            company_test = CompanyTests.objects.create(
+                job = job,
+                test_title = test_title,
+                test_is_timed = is_timed_test,
+                test_timer = timer,
+                test_questions = test_questions,              
+            )
+            print("Test added successfully")
+            return Response({"success": True, "message": "Test added successfully.",
+                             "companytest_id": company_test.id}, status=201) 
+           
+    except JobVacancies.DoesNotExist:
+        print("Job vacancy not found")
+        return Response({"success": False, "message": "Job vacancy not found"}, status=404)

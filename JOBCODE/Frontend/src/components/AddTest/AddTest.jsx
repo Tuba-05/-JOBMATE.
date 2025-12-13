@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./AddTest.css";
+import { useNavigate } from "react-router-dom";
 
 const AddTest = () => {
+  const navigate = useNavigate();  // Initialize navigate inside the component
+  const JobId = localStorage.getItem("JobId");
+  const [loading, setLoading] = useState(false); // disable submit btn while submitting
+  const [buttonstate, setbuttonstate] = useState(false); // State for button toggle
   const [testTitle, setTestTitle] = useState(""); // State for test title
   const [isTimedTest, setIsTimedTest] = useState(false); // State for timed test checkbox
   const [timer, setTimer] = useState(""); // State for timer (if timed test is enabled)
@@ -49,37 +54,63 @@ const AddTest = () => {
   // Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault(); // prevents page reload
-
-    const testData = {
-      testTitle,
-      isTimedTest,
-      timer,
-      questions,
-    };
-
-    try {
-        const response = await fetch("http://127.0.0.1:8000/api/test-scores/",{
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(testData),
-      });
-      const test_data = await response.json();
-
-      if (test_data.success){
-        alert("Test added successfully!");
-      }
-      else{
-        alert("Error adding test : (");
-      }
-      // Reset form
-      setTestTitle("");
-      setQuestions([{ question: "", options: ["", "", "", ""], correctAnswer: "" }]);
-      setIsTimedTest(false);
-      setTimer("");
-    } 
-    catch (error) {
-      alert("Failed to submit test. Please try again.", error);
+    if (buttonstate){
+      navigate("/company-dashboard");
+      return; // early return to avoid submitting when going back
     }
+
+     // --- basic validation ---
+    if (!testTitle.trim()) {
+        alert("Please enter a test title.");
+        return;
+    }
+    if (isTimedTest && (!timer || parseInt(timer) <= 0)) {
+        alert("Please enter a valid timer duration in minutes.");
+        return;
+    }
+    // Check all questions for completeness , trim() to avoid spaces
+    const incompleteQuestion = questions.find(q => 
+        !q.question.trim() || 
+        q.options.some(opt => !opt.trim()) || 
+        !q.correctAnswer.trim()
+    );
+    if (incompleteQuestion) {
+        alert("Please fill in all questions, options, and select a correct answer for each.");
+        return;
+    }
+    // ----------------------------
+    setLoading(true); // disable submit button during submission
+      const testData = {
+        jobId: JobId,
+        testTitle,
+        isTimedTest,
+        timer,
+        questions,
+      };
+      try {
+          const response = await fetch("http://127.0.0.1:8000/api/add-tests/",{
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(testData),
+        });
+        const test_data = await response.json();
+
+        if (test_data.success){
+          localStorage.setItem("CompanyTestId", test_data.companytest_id); // Store TestId for later use
+          alert("Test added successfully!");
+          setLoading(false);
+          setbuttonstate(true);
+        }
+        else{
+          alert("Error adding test :( ");
+        }
+      } 
+      catch (error) {
+        alert("Failed to submit test. Please try again.");
+        setLoading(false);
+        console.error(error);
+      }
+      
   };
 
   return (
@@ -146,7 +177,7 @@ const AddTest = () => {
                 value={timer}
                 onChange={handleTimerChange}
                 required
-                min="0"
+                min="1"
               />
             </div>
           )}
@@ -197,8 +228,12 @@ const AddTest = () => {
                 >
                   <option value="">Select the correct answer</option>
                   {q.options.map((opt, optIndex) => (
-                    <option key={optIndex} value={opt}>
-                      Option {optIndex + 1}: {opt}
+                    <option
+                      key={optIndex}
+                      value={opt}
+                      // disabled={!opt}   // disable if option is empty
+                    >
+                      Option {optIndex + 1}: {opt || "Empty"}
                     </option>
                   ))}
                 </select>
@@ -208,20 +243,22 @@ const AddTest = () => {
 
           {/* Buttons: Add Question & Submit */}
           <div className="button-containers">
-            <button
-              type="button"
-              className="btn btn-outline-primary mb-3 add-question-btn"
-              onClick={addQuestion}
-              disabled={questions.length >= MAX_QUESTIONS}
-            >
-              Add Question
-            </button>
-
-            <button
+            { (!buttonstate) && (
+              <button
+                type="button"
+                className="btn btn-outline-primary mb-3 add-question-btn"
+                onClick={addQuestion}
+                disabled={questions.length >= MAX_QUESTIONS}
+              >
+                Add Question
+              </button>
+            ) }
+            {/* button state */}
+            <button 
               type="submit"
               className="btn btn-outline-success submit-test-btn"
-            >
-              Submit Test
+              disabled={loading}>
+                {loading ? "Submitting..." : buttonstate ? "Back" : "Submit Test"}
             </button>
           </div>
         </form>

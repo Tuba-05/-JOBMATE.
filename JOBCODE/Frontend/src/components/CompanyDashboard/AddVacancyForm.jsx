@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 const VacancyForm = () => {
   const navigate = useNavigate();  // Initialize navigate inside the component
   const compUser = localStorage.getItem("UserId");
+  const [showbutton, setshowbutton] = useState(true); // State for button toggle
+  const [AddAnotherVacancy, setAddAnotherVacancy] = useState(false); // State to toggle between vacancy and test form
   const [vacancyData, setVacancyData] = useState({
     title: "",
     requiredSkills: "",
@@ -26,35 +28,48 @@ const VacancyForm = () => {
   }
   // Handle form submission
   const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // await AddVacancy(vacancyData); // Save vacancy data to Firebase
-      const response = await fetch("http://127.0.0.1:8000/api/add-job-vacancy/",{
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataToSend),
-      }); 
-      const vacancyResponse = await response.json();
-      if (vacancyResponse. success){
-        alert("Vacancy submitted successfully!");
-        // Navigate to the "add-test" page
-        navigate("/add-test");
+    e.preventDefault(); //event object, prevents page reload ,stops those automatic behaviors
+    // submitting vacancy data to backend
+    if (showbutton) {
+      setshowbutton(false);
+      setAddAnotherVacancy(true);
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/add-job-vacancy/",{
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dataToSend),
+        }); 
+        const vacancyResponse = await response.json();
+        if (vacancyResponse. success){
+          localStorage.setItem("JobId", vacancyResponse.job_id); // Store JobId for later use
+          alert("Vacancy submitted successfully!");
+        }
+        else{
+          alert("Error from backend.");
+        }    
+      } catch (error) {
+        console.error("Error submitting vacancy:", error);
+        alert("Failed to submit vacancy. Please try again.");
+      }
+    }
+    // adding another vacancy or adding test for the same vacancy
+    else {
+      if(!AddAnotherVacancy){
+        navigate("/add-test"); // adding test
+        return; // early return to avoid submitting when going back
       }
       else{
-        alert("Error from backend.");
-      }    
-      // Clear form fields
-      setVacancyData({
-        title: "",
-        requiredSkills: "",
-        levelOfExperience: "",
-        additionalRequirements: "",
-        location: "",
-        timing: "",
-      });
-    } catch (error) {
-      console.error("Error submitting vacancy:", error);
-      alert("Failed to submit vacancy. Please try again.");
+        // Clear form fields
+        setVacancyData({
+          title: "",
+          requiredSkills: "",
+          levelOfExperience: "",
+          additionalRequirements: "",
+          location: "",
+          timing: "",
+        });
+        setshowbutton(true); // bcz we have to submit vacancy again
+      }
     }
   };
   return (
@@ -116,7 +131,7 @@ const VacancyForm = () => {
                 .split("\n")
                 .map((req, index) => (
                   <li key={index}>{req}</li>
-                ))}
+                ))} 
             </ul> */}
         <label className="form-label">
           <span className={`floating-label ${vacancyData.additionalRequirements ? "filled" : ""}`}>
@@ -141,7 +156,7 @@ const VacancyForm = () => {
             value={vacancyData.location}
             onChange={handleInputChange}
             required
-            placeholder="e.g., Karachi, Pakistan"
+            placeholder="e.g., Karachi, Pakistan (or Remote)"
             className="form-input"
           />
         </label>
@@ -163,9 +178,18 @@ const VacancyForm = () => {
         <button
           type="submit"
           className="submit-btn"
+          onClick={()=> setAddAnotherVacancy(false)}
         >
-          Submit Vacancy
+          {showbutton ? "Submit Vacancy" :  "Add Test"}
         </button>
+        {AddAnotherVacancy && (
+          <button
+            type = "button"
+            className="submit-btn"
+          >
+            Add Another Vacancy
+          </button>
+        )}
       </form>
     </div>
   );

@@ -1,0 +1,161 @@
+/* Container for the job section */
+/* .job-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 20px;
+} */
+
+/* Row styling */
+/* .job-row {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+} */
+
+/* Column styling */
+/* .job-col {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+} */
+
+/* Text styling for values */
+/* .job-col p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+} */
+
+/* List styling for skills */
+/* .job-col ul {
+  padding-left: 20px;
+  margin: 0;
+  list-style: disc;
+}
+
+.job-col ul li {
+  font-size: 14px;
+} */
+
+
+.job-section {
+  padding: 20px;
+  background-color: #2a2828;
+  border-radius: 15px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 6px rgba(250, 248, 248, 0.761);
+}
+
+.job-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px; /* Space between job cards */
+  justify-content: center;
+  box-sizing: border-box;
+
+
+}
+
+.job-card {
+  background-color: white;
+  color: black;
+  padding: 15px; /* Reduced padding */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(127, 127, 127, 0.761);
+  width: calc(33.33% - 20px); /* Ensure three cards in a row */
+  box-sizing: border-box; /* Include padding in width calculation */
+  margin: 10px 0; /* Reduce vertical margin */
+  border-color: black;
+  border-radius: 5px;
+}
+
+.job-detail {
+  margin-bottom: 10px; /* Reduce spacing between details */
+}
+
+.job-key {
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bolder;
+  font-size: 16px;
+  margin-bottom: 5px;
+  background-color: #959494;
+  border-radius: 5px;
+  margin-left: 2px;
+  padding-left: 3px;
+  
+}
+
+.job-value {
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+  font-size: 13px;
+  margin-left: 5px;
+  background-color: rgb(234, 238, 242);
+  border-radius: 5px;
+  padding-left: 3px;
+}
+
+.job-value p {
+  margin: 0;
+  
+}
+
+.job-value ul {
+  /* padding-left: 20px; */
+  margin: 0;
+}
+
+.job-value li {
+  list-style-type: disc;
+}
+
+/* Responsive layout: switch to single-column for smaller screens */
+@media (max-width: 768px) {
+  .job-card {
+    width: 100%; /* Full width for smaller devices */
+  }
+}
+
+/* Container for the buttons */
+.job-buttons {
+  display: flex;
+  justify-content: space-between; /* Space between the buttons */
+  margin-top: 15px; /* Add some space above the buttons */
+}
+
+/* Styling for individual buttons */
+.job-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  background-color: #b51d1d; /* Primary blue color */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth hover effect */
+  text-align: center;
+}
+
+.job-btn:hover {
+  background-color: #f75252; /* Darker blue on hover */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+/* Ensure buttons are responsive and aligned on smaller screens */
+@media (max-width: 768px) {
+  .job-buttons {
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center align buttons */
+  }
+
+  .job-btn {
+    width: 100%; /* Full width for smaller screens */
+    margin-bottom: 10px; /* Add spacing between stacked buttons */
+  }
+}

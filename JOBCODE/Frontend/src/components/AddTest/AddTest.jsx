@@ -50,6 +50,13 @@ const AddTest = () => {
       ]);
     }
   };
+  // remove a question
+  const removeQuestion = (indexToRemove) => {
+  const updatedQuestions = questions.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setQuestions(updatedQuestions);
+  };
 
   // Form submit handler
   const handleSubmit = async (e) => {
@@ -114,29 +121,28 @@ const AddTest = () => {
   };
 
   return (
-    <div className="add-test-container">
-
+    <div className="add-test-container"
+    style={{ marginTop: `${300 + (questions.length - 1) * 460}px`
+    }} >
       {/* Progress Bar showing how many questions added */}
       <div className="progress-bar">
         <div
           className="progress"
-          style={{
-            width: `${(questions.length / MAX_QUESTIONS) * 100}%`,
-          }}
-        >
+          style={{ width: `${(questions.length / MAX_QUESTIONS) * 100}%`,
+          }} >
           <span className="progress-text">
             {Math.round((questions.length / MAX_QUESTIONS) * 100)}%
           </span>
         </div>
       </div>
-
+      {/* question card/ box */}
       <div className="neumorphism-card">
         <h1 className="text-center mb-4 animate__fadeIn">Design Your Test</h1>
 
         <p className="text-center text-white">
           <strong>Questions Added: {questions.length}/{MAX_QUESTIONS}</strong>
         </p>
-
+        {/* FORM */}
         <form onSubmit={handleSubmit} className="animate__fadeInUp">
 
           {/* Test Title */}
@@ -184,11 +190,28 @@ const AddTest = () => {
 
           {/* Question Listing */}
           {questions.map((q, qIndex) => (
-            <div key={qIndex} className="mb-4 border rounded p-3 question-card">
+          <div key={qIndex} className="mb-4 border rounded p-3 question-card" >
+
+            {/* Question header with remove button */}
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <label className="form-labeladd">
+                Question {qIndex + 1}
+              </label>
+
+              {questions.length > 1 && (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-danger"
+                  onClick={() => removeQuestion(qIndex)}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
 
               {/* Question Textarea */}
               <div className="mb-3">
-                <label className="form-labeladd">Question {qIndex + 1}</label>
+                {/* <label className="form-labeladd">Question {qIndex + 1}</label> */}
                 <textarea
                   className="form-control neumorphic-input"
                   placeholder="Enter the question"

@@ -45,23 +45,46 @@ const ProfileForm = () => {
 
     if (loading) return <p className="profileForm-loadingText">Loading...</p>;
     if (error) return <p className="profileForm-errorText">Error: {error}</p>;
-
+    const getFileType = (url) => {
+        if (!url) return null;
+        const ext = url.split(".").pop().toLowerCase();
+        return ext;
+        };  
+    const fileType = getFileType(URL);
+    // const canPreview = ["pdf", "html", "htm"].includes(fileType);
+  
     return (
         <>
-        {/* 
-for open in new tab:-
-<a href={URL} target="_blank">View Resume</a>
-        */}
+        {/* for open in new tab:-
+        <a href={URL} target="_blank">View Resume</a> */}
         <div className="profile_row"> 
-        <div className="profile_body">
+            <div className="profile_body">
             {URL ? (
-            <iframe src={URL} width="100%" height="600px"></iframe>
+                <>  
+                <iframe
+                    src={URL}
+                    width="100%"
+                    height="600px"
+                    // title="Resume Preview"
+                />
+                {/* <div className="profileForm-downloadBox">
+                    <a
+                    href={URL}
+                    download
+                    className="btn btn-outline-primary"
+                    >
+                    Download Resume
+                    </a>
+                </div> */}
+                </>
             ) : (
-            <p>No resume uploaded yet :( </p>
+                <p>No resume uploaded yet :(</p>
             )}
             </div>
             <div className="profileForm-buttonContainer">
                 <button className="profileForm-leftButton" onClick={handleFindJobs}>See Results <br /> For JOB</button>
+                <button className="profileForm-leftButton" onClick={() => navigate("/cv")}>Upload / <br /> Update Resume</button>
+
             </div>
         </div>
         </>

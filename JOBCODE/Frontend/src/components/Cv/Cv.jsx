@@ -33,7 +33,7 @@ function Cv() {
         "application/pdf", // PDF
         "application/msword", // DOC
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
-        "application/vnd.oasis.opendocument.text", // ODT
+        // "application/vnd.oasis.opendocument.text", // ODT
         "text/html",  // HTML
         "application/xhtml+xml", // XHTML
         ];

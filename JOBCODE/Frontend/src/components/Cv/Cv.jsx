@@ -70,12 +70,10 @@ function Cv() {
                 const uploadedFileUrl = res.data.resume_url; // user's resume link
                 localStorage.setItem("UserId", res.data.user_id); // Save User ID for later usage
                 console.log(res.data.message);
-
                 setMsg1("Upload Successful");
                 setIcon(
-                    <i
-                    className="bi bi-check success-icon"
-                    style={{ color: "green" }}
+                    <i className="bi bi-check success-icon"
+                        style={{ color: "green" }}
                     ></i>
                 );
                 localStorage.setItem("resume_url", uploadedFileUrl); // saving in localStorage for later

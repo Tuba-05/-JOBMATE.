@@ -129,10 +129,8 @@ function LogSign() {
   return (
     <div
       className={`content justify-content-center align-items-center d-flex shadow-lg ${
-        isSignupActive ? "active" : ""
-      }`}
-      id="content"
-    >
+                isSignupActive ? "active" : "" }`}
+                id="content" >
       {/* SIGN UP FORM */}
       <div className="col-md-6 d-flex justify-content-center">
         <form onSubmit={handleSignupSubmit}>
@@ -149,7 +147,7 @@ function LogSign() {
             {/* username */}
             <input
               type="text"
-              className="form-control form-control-lg bg-white fs-6"
+              className="form-control form-control-lg bg-white fs-6 text-gray"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}

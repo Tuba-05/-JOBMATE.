@@ -13,7 +13,7 @@ body.home-page {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Full viewport height */
+    min-height: 94.5vh; /* Full viewport height */
     flex-direction: column;
     text-align: center;
     overflow: hidden;
@@ -27,6 +27,7 @@ body.home-page {
     height: 100vh;
     object-fit: cover;
     z-index: -1;
+    background: chocolate;
 }
 /* Style for the "Welcome" text */
 .home-page-title {
@@ -97,8 +98,8 @@ body.home-page {
     flex-direction: column;
     align-items: flex-end; /* Align buttons to the right */
     position: absolute;
-    right: 50px; /* Distance from the right side of the page */
-    top: 150px; 
+    right: 45px; /* Distance from the right side of the page */
+    top: 100px; 
     gap: 40px; /* Increase spacing */
 }
 
@@ -107,7 +108,7 @@ body.home-page {
     font-family: 'Protest Strike', sans-serif;
     background: linear-gradient(145deg, #7d7d7d, #000000); /* Dark black */
     color: white;
-    border: none;
+    border: 2px solid #ffffffc5;
     padding: 20px;
     font-size: 1.7rem;
     cursor: pointer;
@@ -124,6 +125,7 @@ body.home-page {
 }
 
 .home-page-btn:hover {
+    border: 3px solid #107e7ec5;
     background-color: #aeaaaa; /* Light gray on hover */
     color: #000;
     transform: scale(1.1);
@@ -196,7 +198,6 @@ body.home-page {
 .home-page-container {
   display: flex;
   gap: 20px; 
-  overflow: hidden;
   margin-top: -220px; 
   padding-bottom: 20px; 
   }
@@ -217,7 +218,7 @@ body.home-page {
 
 .overlay-text:hover {
     transform: translateY(-5px);
-    border-color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(52, 183, 172, 0.7);
     box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3), 0 4px 15px rgba(0, 0, 0, 0.4); /* Add a glow effect *//* Highlight border on hover */
 }
 

@@ -159,7 +159,7 @@ def upload_resume(request):
 
 
 @api_view(['POST'])
-def display_profile_info(request):
+def display_profile_info(request): # resume display
     """ function send user's public resume link for frontend display"""
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
@@ -222,6 +222,17 @@ def add_vacancy(request):
         print("Company not found")
         return Response({"success": False, "message": "Company not found"}, status=404)        
             
+
+@api_view(['POST'])
+def show_job_vacancies(request):
+    """ function fetches job vacancies from DB to display on frontend"""
+    if request.method != "POST":  # invalid http method
+        return Response({"error": "Invalid request method"}, status=400)
+
+    job_vacancies = JobVacancies.objects.all().values()  # fetch all job vacancies
+    job_vacancies_list = list(job_vacancies)  # convert QuerySet to list
+
+    return Response({"success": True, "job_vacancies": job_vacancies_list}, status=200)
 
 @api_view(['POST'])
 def add_tests(request):

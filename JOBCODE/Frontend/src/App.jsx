@@ -5,6 +5,7 @@ import Cv from '../src/components/Cv/Cv.jsx'
 import ProfileForm from '../src/components/ProfileForm/ProfileForm.jsx'
 import CompanyDashboard from "./components/CompanyDashboard/CompanyDashboard.jsx"
 import AddTest from "./components/AddTest/AddTest.jsx"
+import JobCard from "./components/JobCard/JobCard.jsx"
 
 function App() {
 
@@ -12,12 +13,13 @@ function App() {
     <>
     <BrowserRouter>
     <Routes>
-      <Route path= "/" element={< HomePg/>} />
+      {/* <Route path= "/" element={< HomePg/>} />
       <Route path= "/login-signup" element={<LogSign/>}/>
       <Route path="/cv" element={<Cv/>}/>
       <Route path='Pf' element={<ProfileForm/>}/>
       <Route path= "/company-dashboard" element={<CompanyDashboard/>}/>
-      <Route path= "/add-test" element={<AddTest/>}/>
+      <Route path= "/add-test" element={<AddTest/>}/> */}
+      <Route path='/' element={<JobCard/>}/>
     </Routes>
     </BrowserRouter>
     </>  

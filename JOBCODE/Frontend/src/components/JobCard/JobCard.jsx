@@ -8,7 +8,7 @@ const JobCard = () => {
 
   useEffect(() => {
     // Fetching the job data
-    fetch("/src/assets/jobalert.json")
+    fetch("/src/assets/jobs.json")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch job data.");
@@ -24,28 +24,6 @@ const JobCard = () => {
         setLoading(false);
       });
   }, []);
-
-  // const renderJobDetails = (job) => {
-  //   // Iterate over the keys of the job object to create a div for each key-value pair
-  //   return Object.keys(job).map((key, index) => (
-  //     <>
-  //     <div key={index} className="job-detail">
-  //       <div className="job-key">{key}</div>
-  //       <div className="job-value">
-  //         {Array.isArray(job[key]) ? (
-  //           <ul>
-  //             {job[key].map((item, idx) => (
-  //               <li key={idx}>{item}</li>
-  //             ))}
-  //           </ul>
-  //         ) : (
-  //           <p>{job[key]}</p>
-  //         )}
-  //       </div>
-  //     </div>
-  //     </>
-  //   ));
-  // };
 
   const renderJobDetails = (job) => {
     return (

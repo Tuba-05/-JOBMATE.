@@ -34,8 +34,7 @@ const ProfileForm = () => {
                 setLoading(false);
             }
         };
-
-        fetchProfile();
+        fetchProfile(); // Call the function
     }, []); // empty dependency array, runs once
 
 

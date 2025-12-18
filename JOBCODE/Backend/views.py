@@ -7,6 +7,7 @@ from rest_framework.parsers import MultiPartParser, FormParser # for upload file
 from django.contrib.auth.hashers import (make_password, check_password, )  # for hash password
 from supabase_client import supabase
 import uuid  # Universally Unique Identifier, generates a 128-bit unique value(string)
+from datetime import datetime
 
 
 # @csrf_exempt  # disable CSRF just for API testing (remove later if you use tokens)
@@ -224,15 +225,28 @@ def add_vacancy(request):
             
 
 @api_view(['POST'])
-def show_job_vacancies(request):
+def display_vacancies(request):
     """ function fetches job vacancies from DB to display on frontend"""
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
 
-    job_vacancies = JobVacancies.objects.all().values()  # fetch all job vacancies
-    job_vacancies_list = list(job_vacancies)  # convert QuerySet to list
+    job_vacancies_list = JobVacancies.objects.all().values()  # fetch all job vacancies
+    # job_vacancies_list = list(job_vacancies)  # convert QuerySet to list
+    job_data = {}
+    for jobs in job_vacancies_list:
+        job_data[jobs['id']] = {
+            "companyId": jobs['company_id'],
+            "jobTitle": jobs['job_title'],
+            "skillsRequired": jobs['skills_required'],
+            "levelOfExperience": jobs['level_of_experience'],
+            "additionalRequirements": jobs['additional_requirements'],
+            "location": jobs['location'],
+            "timings": jobs['timings'],
+            "posted at": jobs['created_at'].strftime("%b %d, %Y - %I:%M %p"), # Format: Dec 16, 2025 - 04:38 PM
+        }
+    return Response({"success": True, "message": 'vacancies data delievered' ,
+                     "jobs": job_data }, status=200)
 
-    return Response({"success": True, "job_vacancies": job_vacancies_list}, status=200)
 
 @api_view(['POST'])
 def add_tests(request):

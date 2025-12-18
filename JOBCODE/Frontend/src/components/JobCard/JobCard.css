@@ -1,6 +1,6 @@
 /* body */
 .job-section {
-  margin-top: 3800px;
+  margin-top: 70px;
   margin-bottom: 20px;
   padding: 20px;
   background-color: #2a2828;
@@ -56,11 +56,36 @@
   padding-left: 3px;
 }
 
+.job-label {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+/* The Skills Grid (2 or 3 columns depending on space) */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+/* Individual list items */
+.list-item {
+  display: block;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* Requirements list spacing */
+.requirements-list .list-item {
+  margin-bottom: 5px;
+}
+
 h1{
   width: 400px;
   padding: auto;
   color: rgba(235, 228, 228, 0.852);
-  background-color: rgb(27, 112, 197);
+  /* background-color: rgb(27, 112, 197); */
 
 }
 .job-value p {

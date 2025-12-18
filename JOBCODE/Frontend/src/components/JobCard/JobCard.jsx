@@ -27,12 +27,8 @@ const JobCard = () => {
             id,
             ...job_details
           }));
-          /* Result:
-          [
-            { "id": "user123", "name": "Alice", "role": "Admin" },
-            { "id": "user456", "name": "Bob", "role": "User" }
-          ]
-          */
+          /* Result: [ { "id": "user123", "name": "Alice", "role": "Admin" },
+                       { "id": "user456", "name": "Bob", "role": "User" } ]  */
           setJobList(formattedJobs); // storing array of jobs in state var
           setJobDict(jsonData.jobs); // keeping original dict for other uses
         } else {
@@ -50,6 +46,12 @@ const JobCard = () => {
     console.log("Job Data:", jobList); 
     console.log("Job Data Dict:", jobDict); 
 
+  const saveJobs = () => {
+
+  }  
+  const applyJobs = () => {
+
+  }
   // Component to display individual job details
   const JobDetails = ({ job }) => {
   const hiddenKeys = ["id", "companyId"];
@@ -115,7 +117,7 @@ const JobCard = () => {
           <button className="job-btn apply">Apply Now</button>
           <button className="job-btn save">Save Job</button>
       </div>
-      <p> <strong> {count} candidates applied! </strong> </p>
+      <p> <strong> {count} candidates applied. </strong> </p>
     </>
     );
   };

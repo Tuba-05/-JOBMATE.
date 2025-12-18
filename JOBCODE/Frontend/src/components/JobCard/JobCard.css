@@ -2,7 +2,7 @@
 .job-section {
   margin-top: 70px;
   margin-bottom: 20px;
-  padding: 20px;
+  padding: 15px;
   background-color: #2a2828;
   border-radius: 15px;
   box-sizing: border-box;
@@ -25,15 +25,11 @@
   box-shadow: 0 4px 6px rgba(127, 127, 127, 0.761);
   width: calc(33.33% - 20px); /* Ensure three cards in a row */
   box-sizing: border-box; /* Include padding in width calculation */
-  margin: 10px 0; /* Reduce vertical margin */
+  margin: 0px 0px; /* Reduce vertical margin */
   border-color: black;
   border-radius: 5px;
 }
-
-.job-detail {
-  margin-bottom: 10px; /* Reduce spacing between details */
-}
-
+/*  */
 .job-key {
   font-family: 'Times New Roman', Times, serif;
   font-weight: bolder;
@@ -45,7 +41,7 @@
   padding-left: 3px;
   
 }
-
+/*  */
 .job-value {
   font-family: 'Times New Roman', Times, serif;
   font-weight: bold;
@@ -61,50 +57,37 @@
   margin-bottom: 8px;
   color: #333;
 }
-
 /* The Skills Grid (2 or 3 columns depending on space) */
 .skills-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 10px;
 }
-
 /* Individual list items */
 .list-item {
   display: block;
   font-size: 0.95rem;
   color: #555;
 }
-
 /* Requirements list spacing */
 .requirements-list .list-item {
   margin-bottom: 5px;
 }
-
+/*  */
 h1{
-  width: 400px;
-  padding: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: rgba(235, 228, 228, 0.852);
-  /* background-color: rgb(27, 112, 197); */
-
 }
 .job-value p {
   margin: 0;
 }
-
 .job-value ul {
   margin: 0;
 }
-
 .job-value li {
   list-style-type: disc;
-}
-
-/* Responsive layout: switch to single-column for smaller screens */
-@media (max-width: 768px) {
-  .job-card, .job-container, .job-section {
-    width: 100%; /* Full width for smaller devices */
-  }
 }
 
 /* Container for the buttons */
@@ -133,6 +116,12 @@ h1{
   transform: scale(1.05); /* Slight zoom effect */
 }
 
+/* Responsive layout: switch to single-column for smaller screens */
+@media (max-width: 768px) {
+  .job-card, .job-container, .job-section {
+    width: 100%; /* Full width for smaller devices */
+  }
+}
 /* Ensure buttons are responsive and aligned on smaller screens */
 @media (max-width: 768px) {
   .job-buttons {

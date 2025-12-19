@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./JobCard.css";
 
 const JobCard = () => {
+  
   const [jobList, setJobList] = useState([]); // Initialize as array to simplify
   const [jobDict, setJobDict] = useState({});
   const [loading, setLoading] = useState(true);
@@ -11,15 +12,28 @@ const JobCard = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
+        // ------------- Response # 1 FETCH CANDIDATE COUNT ---------------------
+        const response_one = await fetch("http://127.0.1:8000/api/candidate-count/", {
+          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+        });
+        const countData = await response_one.json();
+        if (countData.success) {
+          setCount(countData.count || 0);
+        } else {
+          throw new Error(countData.message || "Failed to retrieve candidate count");
+        }
+
+        // ------------- Response # 2 FETCH JOB DATA ---------------------
         setLoading(true);
-        const response = await fetch("http://127.0.0.1:8000/api/jobs-display/", {
+        const response_two = await fetch("http://127.0.0.1:8000/api/jobs-display/", {
           method: 'POST',
           headers: { "Content-Type": "application/json" },
         });
 
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response_two.ok) throw new Error(`HTTP error! status: ${response_two.status}`);
         
-        const jsonData = await response.json();
+        const jsonData = await response_two.json();
         
         if (jsonData.success) {
           // Transform dictionary to array ONCE when data is fetched

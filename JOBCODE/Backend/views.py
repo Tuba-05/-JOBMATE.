@@ -91,6 +91,8 @@ def login(request):
                     "user_id": user.id,},status=201)
         
 
+# --------------------- CANDIDATE ROUTES ---------------------
+
 @api_view(["POST"])
 def check_resume(request):
     """ function checks whether the user candidate uploaded his resume or not"""
@@ -187,6 +189,42 @@ def display_profile_info(request): # resume display
         print("Candidate not found")
         return Response({"success": False, "message": "Candidate not found"}, status=404)
 
+
+@api_view(['POST'])
+def toggle_jobs(request):
+    """ function to add or remove job applied by candidate """
+    if request.method != "POST":  # invalid http method
+        return Response({"error": "Invalid request method"}, status=400)
+    data_to_be_toggled = request.data
+    candidate_id = data_to_be_toggled.get("candidateId")
+    job_id = data_to_be_toggled.get("jobId")
+    try:
+        candidate =  Candidate.objects.get(user_id= candidate_id) # get candidate object
+        is_applied = candidate.applied_jobs.objects.filter(candidates_applied= candidate_id).exists() # check if job already applied
+        
+        if is_applied: # REMOVE job from applied list
+            candidate.candidates_applied.remove(job_id)  
+            print("Job removed from applied list")
+            return Response({"success": True, "message": "Job removed from applied list",
+                             "user_id": candidate_id,}, status=200)
+        else: # ADD/ SAVE job to applied list/ saved list
+            candidate.candidates_applied.add(job_id)  
+            print("Job added to applied list")
+            return Response({"success": True, "message": "Job added to applied list",
+                             "user_id": candidate_id,}, status=200)
+        
+    except Candidate.DoesNotExist:
+        print("Candidate not found")
+        return Response({"success": False, "message": "Candidate not found"}, status=404)
+
+@api_view(['POST'])
+def jobs_applied(request):
+    """ function send number of jobs applied by candidate to display on frontend """
+    if request.method != "POST":  # invalid http method
+        return Response({"error": "Invalid request method"}, status=400)
+
+# --------------------- COMPANY ROUTES ---------------------
+
 @api_view(['POST'])
 def add_vacancy(request):
     """ function stores job vacancies in DB from frontend"""
@@ -244,6 +282,12 @@ def display_vacancies(request):
             "timings": jobs['timings'],
             "posted at": jobs['created_at'].strftime("%b %d, %Y - %I:%M %p"), # Format: Dec 16, 2025 - 04:38 PM
         }
+
+
+    company_name = Company.objects.get(user_id=jobs['company_id']).user.username
+    job_data[jobs['id']]["companyName"] = company_name
+    print(job_data)
+
     return Response({"success": True, "message": 'vacancies data delievered' ,
                      "jobs": job_data }, status=200)
 

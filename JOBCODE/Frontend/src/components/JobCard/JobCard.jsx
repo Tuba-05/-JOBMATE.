@@ -7,7 +7,12 @@ const JobCard = () => {
   const [jobDict, setJobDict] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  // Modal states
+  const [showModal, setShowModal] = useState(false);
+  const [jobId, setJobId] = useState(null);
+  // Track applied jobs by ID so buttons act independently
+  const [appliedJobs, setAppliedJobs] = useState([]); 
+  
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -44,19 +49,45 @@ const JobCard = () => {
     fetchJobs();
   }, []);
 
+  //Triggered inside the Pop-up Modal when they click "Confirm"
+  const confirmApplication = async () => {
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/applied-to-jobs/", {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({candidateId: localStorage.getItem('UserId'), jobId: jobId, state: "applied" })
+      });
+      // Parse the JSON body from the response
+      const data = await response.json();
+      if (response.ok && data.success) {
+        // FIX: Add this specific ID to the appliedJobs list
+        setAppliedJobs((prev) => [...prev, jobId]);
+        alert("Applied successfully!");
+        setShowModal(false);
+        alert(data.message);
+      } else {
+        // Use the message from the server if available, otherwise a default
+        alert("Failed to apply: " + (data.message || "Unknown error"));
+      }
+      } catch (error) {
+        // This catches network errors (like the server being down)
+        console.error("Application failed:", error);
+        alert("A network error occurred. Please try again later.");
+      }
+  };
+
   // Component to display individual job details
   const JobDetails = ({ job }) => {
   
     const hiddenKeys = ["id", "companyId"];
     const [count, setCount] = useState(0); // no. of candiates applied
-    const [savedstate, setSavedstate] = useState(false); // saved job state
-    const [applystate, setApplystate] = useState(false); // applied job state
+    const isThisJobApplied = appliedJobs.includes(job.id);
 
     // Function to get no. of candidates applied for each job
     useEffect(() => {
     //Defining the async function inside the effect
     const getCount = async () => {
-      setLoading(true);
       try {
         const response = await fetch("http://127.0.0.1:8000/api/candidate-count/", {
           method: 'POST',
@@ -69,45 +100,26 @@ const JobCard = () => {
         setCount(data.count); // Update state with the actual result
       } catch (error) {
         console.error("Error fetching applied count:", error);
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
     getCount(); // Call it immediately
     }, [job.id]); // Runs every time the job ID changes
-    
+     
     // Function to apply for job
     const applyJobs = async (id) => {
-      try {
-      const response = await fetch("http://127.0.0.1:8000/api/applied-to-jobs/", {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({candidateId: localStorage.getItem('UserId'), jobId: id, state: "applied" })
-      });
-      // Parse the JSON body from the response
-      const data = await response.json();
-      if (response.ok && data.success) {
-        alert("Applied successfully!");
-      } else {
-        // Use the message from the server if available, otherwise a default
-        alert("Failed to apply: " + (data.message || "Unknown error"));
-      }
-      } catch (error) {
-        // This catches network errors (like the server being down)
-        console.error("Application error:", error);
-        alert("A network error occurred. Please try again later.");
-      }
+      setJobId(id);
+      setShowModal(true);
     };
 
     // Function to save job
-    const saveJobs = (id) => {
+    const saveJobs = async(id) => {
       try{
-        const savedjobres =  fetch("http://127.0.0.1:8000/api/toggle-jobs/",{
+        const savedjobres = await fetch("http://127.0.0.1:8000/api/toggle-jobs/",{
           method: 'POST',
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({candidateId: localStorage.getItem('UserId'), jobId: id, state:"saved" }) 
         });
-        const response = savedjobres.json();
+        const response = await savedjobres.json();
         if (response.success && savedjobres.ok) {
           alert("Job saved successfully!");
         } else {
@@ -176,7 +188,10 @@ const JobCard = () => {
         </div>
         
         <div className="job-buttons">
-          <button className="job-btn apply" onClick={() => applyJobs(job.id)}> Apply Now </button>
+          <button className={isThisJobApplied ? "btn-disabled" : "btn-primary"} 
+          onClick={() => applyJobs(job.id)}
+          disabled={isThisJobApplied} > 
+            {isThisJobApplied ? "Applied" : "Apply Now"} </button>
           <button className="job-btn save" onClick={() => saveJobs(job.id)}> Save Job </button>
       </div>
       <p> <strong> {count} candidates applied. </strong> </p> 
@@ -203,6 +218,23 @@ const JobCard = () => {
           <p>No job data available.</p>
         )}
       </div>
+
+      {/* Pop-up Window (Modal) */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Confirm Application</h3>
+            <p>Are you sure you want to apply for this position? Your profile will be shared with the employer.</p>
+            
+            <div className="flex gap-4">
+              <button onClick={() => setShowModal(false)}>Cancel</button>
+              <button onClick={confirmApplication} className="bg-green-600 text-white">
+                Confirm & Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
 </>
   );

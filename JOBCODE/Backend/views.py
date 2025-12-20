@@ -245,6 +245,7 @@ def applied_to_jobs(request):
         job = JobVacancies.objects.get(id= job_id) # get job object
         # check if candidate has applied to the job
         if job.candidates_applied.filter(id=candidate.id).exists(): # candidate has applied
+            job.candidates_applied.remove(candidate.id)  # add candidate to job's applied list
             return Response({"success": True, "message": "Already applied to this job",
                              "user_id": candidate_id,}, status=200)
         else: # candidate has not applied

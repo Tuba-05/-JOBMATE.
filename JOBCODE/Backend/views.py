@@ -199,23 +199,25 @@ def toggle_jobs(request):
     candidate_id = data_to_be_toggled.get("candidateId")
     job_id = data_to_be_toggled.get("jobId")
     try:
+        # Get the candidate instance
         candidate =  Candidate.objects.get(user_id= candidate_id) # get candidate object
-        is_applied = candidate.applied_jobs.objects.filter(candidates_applied= candidate_id).exists() # check if job already applied
-        
-        if is_applied: # REMOVE job from applied list
-            candidate.candidates_applied.remove(job_id)  
+        # Use the field name 'save_jobs' defined in your Candidate model, then
+        # use id=job_id in filter to check if this specific job is already linked
+        if candidate.saved_job.filter(id=job_id).exists(): # REMOVE job from applied list
+            candidate.saved_jobs_by_candidates.remove(job_id)  
             print("Job removed from applied list")
             return Response({"success": True, "message": "Job removed from applied list",
                              "user_id": candidate_id,}, status=200)
         else: # ADD/ SAVE job to applied list/ saved list
-            candidate.candidates_applied.add(job_id)  
+            candidate.saved_jobs_by_candidates.add(job_id)  
             print("Job added to applied list")
             return Response({"success": True, "message": "Job added to applied list",
                              "user_id": candidate_id,}, status=200)
         
-    except Candidate.DoesNotExist:
-        print("Candidate not found")
+    except Candidate.DoesNotExist: 
         return Response({"success": False, "message": "Candidate not found"}, status=404)
+    except Exception as e:
+        return Response({"success": False, "message": str(e)}, status=500)
 
 @api_view(['POST'])
 def jobs_applied(request):
@@ -267,30 +269,30 @@ def display_vacancies(request):
     """ function fetches job vacancies from DB to display on frontend"""
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
-
-    job_vacancies_list = JobVacancies.objects.all().values()  # fetch all job vacancies
-    # job_vacancies_list = list(job_vacancies)  # convert QuerySet to list
-    job_data = {}
-    for jobs in job_vacancies_list:
-        job_data[jobs['id']] = {
-            "companyId": jobs['company_id'],
-            "jobTitle": jobs['job_title'],
-            "skillsRequired": jobs['skills_required'],
-            "levelOfExperience": jobs['level_of_experience'],
-            "additionalRequirements": jobs['additional_requirements'],
-            "location": jobs['location'],
-            "timings": jobs['timings'],
-            "posted at": jobs['created_at'].strftime("%b %d, %Y - %I:%M %p"), # Format: Dec 16, 2025 - 04:38 PM
-        }
-
-
-    company_name = Company.objects.get(user_id=jobs['company_id']).user.username
-    job_data[jobs['id']]["companyName"] = company_name
-    print(job_data)
-
-    return Response({"success": True, "message": 'vacancies data delievered' ,
+    try:
+        job_vacancies_list = JobVacancies.objects.all().values()# fetch all job vacancies
+        # job_vacancies_list = list(job_vacancies)  # convert QuerySet to list
+        job_data = {}
+        for jobs in job_vacancies_list:                                   
+            c_name = Company.objects.get(id= jobs["company_id"]).user.username # Company var user, user var username
+            job_data[jobs['id']] = {
+                "companyId": jobs['company_id'], # FK to Company table
+                "CompanyName": c_name, # Company name
+                "jobTitle": jobs['job_title'], # job title
+                "skillsRequired": jobs['skills_required'], # skills required
+                "levelOfExperience": jobs['level_of_experience'], # level of experience
+                "additionalRequirements": jobs['additional_requirements'], # additional requirements
+                "location": jobs['location'], # job location
+                "timings": jobs['timings'], # job timings
+                "posted at": jobs['created_at'].strftime("%b %d, %Y - %I:%M %p"), # Format: Dec 16, 2025 - 04:38 PM
+            }
+        # print(job_data)
+        return Response({"success": True, "message": 'vacancies data delievered' ,
                      "jobs": job_data }, status=200)
 
+    except Exception as e:
+        print("Error fetching job vacancies:", e)
+        return Response({"success": False, "message": f"{str(e)}, no job vacancies list"}, status=500)
 
 @api_view(['POST'])
 def add_tests(request):

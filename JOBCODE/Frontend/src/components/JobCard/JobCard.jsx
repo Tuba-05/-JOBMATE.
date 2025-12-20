@@ -13,16 +13,16 @@ const JobCard = () => {
     const fetchJobs = async () => {
       try {
         // ------------- Response # 1 FETCH CANDIDATE COUNT ---------------------
-        const response_one = await fetch("http://127.0.1:8000/api/candidate-count/", {
-          method: 'POST',
-          headers: { "Content-Type": "application/json" },
-        });
-        const countData = await response_one.json();
-        if (countData.success) {
-          setCount(countData.count || 0);
-        } else {
-          throw new Error(countData.message || "Failed to retrieve candidate count");
-        }
+        // const response_one = await fetch("http://127.0.1:8000/api/candidate-count/", {
+        //   method: 'POST',
+        //   headers: { "Content-Type": "application/json" },
+        // });
+        // const countData = await response_one.json();
+        // if (countData.success) {
+        //   setCount(countData.count || 0);
+        // } else {
+        //   throw new Error(countData.message || "Failed to retrieve candidate count");
+        // }
 
         // ------------- Response # 2 FETCH JOB DATA ---------------------
         setLoading(true);
@@ -57,8 +57,8 @@ const JobCard = () => {
     fetchJobs();
   }, []);
     // checking purpose
-    console.log("Job Data:", jobList); 
-    console.log("Job Data Dict:", jobDict); 
+    // console.log("Job Data:", jobList); 
+    // console.log("Job Data Dict:", jobDict); 
 
   const saveJobs = () => {
 
@@ -128,8 +128,8 @@ const JobCard = () => {
         </div>
     }
       <div className="job-buttons">
-          <button className="job-btn apply">Apply Now</button>
-          <button className="job-btn save">Save Job</button>
+          <button className="job-btn apply" onClick={applyJobs}> Apply Now </button>
+          <button className="job-btn save" onClick={saveJobs}> Save Job </button>
       </div>
       <p> <strong> {count} candidates applied. </strong> </p>
     </>

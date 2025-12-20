@@ -21,6 +21,8 @@ class CustomUser(models.Model):
 class Candidate(models.Model):
     # PK is assigned default by Django as 'id'
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE) # ← UNIQUE / acts as user_id
+    save_jobs = models.ManyToManyField("JobVacancies", related_name="saved_jobs",) # list of saved job ids
+    # full_name = models.CharField(max_length=150, null=False, blank=False) # must
     profession = models.CharField(max_length=50, null=True, blank=True) # optional
     experience = models.CharField(max_length=10, null=True, blank=True) # optional
     skills = models.TextField(max_length=1000, null=True, blank=True) # optional

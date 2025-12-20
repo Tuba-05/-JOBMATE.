@@ -9,7 +9,7 @@ urlpatterns = [
     path("check-resume/", views.check_resume, name='resume_checking'),
     path("upload-resume/", views.upload_resume, name='resume_uploading'),
     path("display-profile-info/", views.display_profile_info, name='profile_info_display'), 
-    path("candidate-count/", views.jobs_applied, name='jobs_applied_display'),
+    path("applied-to-jobs/", views.applied_to_jobs, name='jobs_applied_display'),
     path("toggle-jobs/", views.toggle_jobs, name='add-remove-saved-jobs'), 
     # company routes
     path("add-job-vacancy/", views.add_vacancy, name='add_job_vacancies'),

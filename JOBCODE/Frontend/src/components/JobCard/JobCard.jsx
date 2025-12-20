@@ -2,29 +2,16 @@ import { useEffect, useState } from "react";
 import "./JobCard.css";
 
 const JobCard = () => {
-  
+  const UserID = localStorage.getItem('UserId');
   const [jobList, setJobList] = useState([]); // Initialize as array to simplify
   const [jobDict, setJobDict] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [count, setCount] = useState(0); // no. of candiates applied
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        // ------------- Response # 1 FETCH CANDIDATE COUNT ---------------------
-        // const response_one = await fetch("http://127.0.1:8000/api/candidate-count/", {
-        //   method: 'POST',
-        //   headers: { "Content-Type": "application/json" },
-        // });
-        // const countData = await response_one.json();
-        // if (countData.success) {
-        //   setCount(countData.count || 0);
-        // } else {
-        //   throw new Error(countData.message || "Failed to retrieve candidate count");
-        // }
-
-        // ------------- Response # 2 FETCH JOB DATA ---------------------
+        // ------------- FETCH JOB DATA ---------------------
         setLoading(true);
         const response_two = await fetch("http://127.0.0.1:8000/api/jobs-display/", {
           method: 'POST',
@@ -56,23 +43,84 @@ const JobCard = () => {
     };
     fetchJobs();
   }, []);
-    // checking purpose
-    // console.log("Job Data:", jobList); 
-    // console.log("Job Data Dict:", jobDict); 
 
-  const saveJobs = () => {
-
-  }  
-  const applyJobs = () => {
-
-  }
   // Component to display individual job details
   const JobDetails = ({ job }) => {
-  const hiddenKeys = ["id", "companyId"];
+  
+    const hiddenKeys = ["id", "companyId"];
+    const [count, setCount] = useState(0); // no. of candiates applied
+    const [savedstate, setSavedstate] = useState(false); // saved job state
+    const [applystate, setApplystate] = useState(false); // applied job state
+
+    // Function to get no. of candidates applied for each job
+    useEffect(() => {
+    //Defining the async function inside the effect
+    const getCount = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/candidate-count/", {
+          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jobId: job.id, candidateId: UserID }) 
+        });
+
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        setCount(data.count); // Update state with the actual result
+      } catch (error) {
+        console.error("Error fetching applied count:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getCount(); // Call it immediately
+    }, [job.id]); // Runs every time the job ID changes
+    
+    // Function to apply for job
+    const applyJobs = async (id) => {
+      try {
+      const response = await fetch("http://127.0.0.1:8000/api/applied-to-jobs/", {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({candidateId: localStorage.getItem('UserId'), jobId: id, state: "applied" })
+      });
+      // Parse the JSON body from the response
+      const data = await response.json();
+      if (response.ok && data.success) {
+        alert("Applied successfully!");
+      } else {
+        // Use the message from the server if available, otherwise a default
+        alert("Failed to apply: " + (data.message || "Unknown error"));
+      }
+      } catch (error) {
+        // This catches network errors (like the server being down)
+        console.error("Application error:", error);
+        alert("A network error occurred. Please try again later.");
+      }
+    };
+
+    // Function to save job
+    const saveJobs = (id) => {
+      try{
+        const savedjobres =  fetch("http://127.0.0.1:8000/api/toggle-jobs/",{
+          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({candidateId: localStorage.getItem('UserId'), jobId: id, state:"saved" }) 
+        });
+        const response = savedjobres.json();
+        if (response.success && savedjobres.ok) {
+          alert("Job saved successfully!");
+        } else {
+          alert("Failed to save job: " + response.message);
+        }
+      } catch (error) {
+        console.error("Save job error:", error);
+        alert("A network error occurred while saving the job. Please try again later.");
+      }
+    };
 
   return (
-    <>
-      {
+    <> { <>
         <div key={job.id} className="job-details">
             {Object.entries(job)
             .filter(([key]) => !hiddenKeys.includes(key)) // filter out hidden keys
@@ -126,13 +174,13 @@ const JobCard = () => {
           );
         })}
         </div>
-    }
-      <div className="job-buttons">
-          <button className="job-btn apply" onClick={applyJobs}> Apply Now </button>
-          <button className="job-btn save" onClick={saveJobs}> Save Job </button>
+        
+        <div className="job-buttons">
+          <button className="job-btn apply" onClick={() => applyJobs(job.id)}> Apply Now </button>
+          <button className="job-btn save" onClick={() => saveJobs(job.id)}> Save Job </button>
       </div>
-      <p> <strong> {count} candidates applied. </strong> </p>
-    </>
+      <p> <strong> {count} candidates applied. </strong> </p> 
+      </> } </>
     );
   };
 
@@ -157,7 +205,6 @@ const JobCard = () => {
       </div>
     </div>
 </>
-
   );
 };
 export default JobCard;

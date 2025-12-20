@@ -20,6 +20,7 @@ const ProfileForm = () => {
 
                 if (info_to_be_displayed.success) { 
                     setURL(info_to_be_displayed.resume_url);
+                    localStorage.setItem("UserID", info_to_be_displayed.user_id);
                     console.log("API Response:", info_to_be_displayed);
                     console.log(info_to_be_displayed.message);
                 } else {
@@ -66,15 +67,6 @@ const ProfileForm = () => {
                     height="600px"
                     // title="Resume Preview"
                 />
-                {/* <div className="profileForm-downloadBox">
-                    <a
-                    href={URL}
-                    download
-                    className="btn btn-outline-primary"
-                    >
-                    Download Resume
-                    </a>
-                </div> */}
                 </>
             ) : (
                 <p>No resume uploaded yet :(</p>

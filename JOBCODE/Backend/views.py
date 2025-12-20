@@ -192,7 +192,7 @@ def display_profile_info(request): # resume display
 
 @api_view(['POST'])
 def toggle_jobs(request):
-    """ function to add or remove job applied by candidate """
+    """ function ta saved/remove jobs from saved jobs list """
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
     data_to_be_toggled = request.data
@@ -201,29 +201,61 @@ def toggle_jobs(request):
     try:
         # Get the candidate instance
         candidate =  Candidate.objects.get(user_id= candidate_id) # get candidate object
+        
         # Use the field name 'save_jobs' defined in your Candidate model, then
         # use id=job_id in filter to check if this specific job is already linked
-        if candidate.saved_job.filter(id=job_id).exists(): # REMOVE job from applied list
-            candidate.saved_jobs_by_candidates.remove(job_id)  
-            print("Job removed from applied list")
-            return Response({"success": True, "message": "Job removed from applied list",
-                             "user_id": candidate_id,}, status=200)
-        else: # ADD/ SAVE job to applied list/ saved list
-            candidate.saved_jobs_by_candidates.add(job_id)  
-            print("Job added to applied list")
-            return Response({"success": True, "message": "Job added to applied list",
-                             "user_id": candidate_id,}, status=200)
         
+        if data_to_be_toggled.get("state") == 'saved':
+            if candidate.saved_job.filter(id=job_id).exists(): # dont need to saved job again
+                print("Job already exists in list")
+                return Response({"success": True, "message": "Job already exists in list",
+                                "user_id": candidate_id,}, status=200)
+            else: # ADD/ SAVE job to applied list/ saved list
+                candidate.saved_jobs_by_candidates.add(job_id)  
+                print("Job added to saved list")
+                return Response({"success": True, "message": "Job added to saved list",
+                                "user_id": candidate_id,}, status=200)
+            
+        if data_to_be_toggled.get("state") == 'homepage':
+            if candidate.saved_job.filter(id=job_id).exists(): # REMOVE job from saved list
+                candidate.saved_jobs_by_candidates.remove(job_id)  
+                print("Job removed from saved list")
+                return Response({"success": True, "message": "Job removed from applied list",
+                             "user_id": candidate_id,}, status=200)
+            else:
+                return Response({"sucess": False, "message": 'this job does not exists in your list.'})
+
     except Candidate.DoesNotExist: 
         return Response({"success": False, "message": "Candidate not found"}, status=404)
     except Exception as e:
         return Response({"success": False, "message": str(e)}, status=500)
 
 @api_view(['POST'])
-def jobs_applied(request):
+def applied_to_jobs(request):
     """ function send number of jobs applied by candidate to display on frontend """
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
+    
+    candidate_appliedJobs = request.data
+    candidate_id = candidate_appliedJobs.get("candidateId")
+    job_id = candidate_appliedJobs.get("jobId")
+    try:
+        # candidate & job instances
+        candidate =  Candidate.objects.get(user_id= candidate_id) # get candidate object
+        job = JobVacancies.objects.get(id= job_id) # get job object
+        # check if candidate has applied to the job
+        if job.candidates_applied.filter(id=candidate.id).exists(): # candidate has applied
+            return Response({"success": True, "message": "Already applied to this job",
+                             "user_id": candidate_id,}, status=200)
+        else: # candidate has not applied
+            job.candidates_applied.add(candidate.id)  # add candidate to job's applied list
+            return Response({"success": True, "message": "Sucessfully applied to this job",
+                             "user_id": candidate_id,}, status=200)
+        
+    except Candidate.DoesNotExist or JobVacancies.DoesNotExist: 
+        return Response({"success": False, "message": "Candidate -OR- Job not found"}, status=404)
+    except Exception as e:
+        return Response({"success": False, "message": str(e)}, status=500)    
 
 # --------------------- COMPANY ROUTES ---------------------
 

@@ -100,7 +100,7 @@ const JobCard = () => {
         setCount(data.count); // Update state with the actual result
       } catch (error) {
         console.error("Error fetching applied count:", error);
-      } 
+      }    
     };
     getCount(); // Call it immediately
     }, [job.id]); // Runs every time the job ID changes

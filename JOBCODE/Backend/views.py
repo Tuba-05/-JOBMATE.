@@ -252,11 +252,44 @@ def applied_to_jobs(request):
             job.candidates_applied.add(candidate.id)  # add candidate to job's applied list
             return Response({"success": True, "message": "Sucessfully applied to this job",
                              "user_id": candidate_id,}, status=200)
-        
+         
     except Candidate.DoesNotExist or JobVacancies.DoesNotExist: 
         return Response({"success": False, "message": "Candidate -OR- Job not found"}, status=404)
     except Exception as e:
         return Response({"success": False, "message": str(e)}, status=500)    
+
+
+@api_view(['POST'])
+def wachlist(request):
+    """ function send user saved jobs to watchlist page"""
+    if request.method != "POST":  # invalid http method
+        return Response({"error": "Invalid request method"}, status=400)
+    candidate_id = request.data.get('UserId')
+    try:
+        candidate = Candidate.objects.get(user_id= candidate_id)
+        save_jobs = candidate.saved_jobs.all() # Get All Saved Jobs, a QuerySet of JobVacancies objects
+        job_ids = candidate.save_jobs.values_list("id", flat=True) # Get Only Saved Job IDs
+        # job_ids = list(job_ids)
+        watchlist = {}
+        for id in job_ids:
+            job_details = JobVacancies.objects.get(id= id)
+            watchlist[job_details['id']] = {
+                "company name" : job_details.company.user.username,
+                "Job title" : job_details.job_title,
+                "skillsRequired": job_details.skills_required, # skills required
+                "levelOfExperience": job_details.level_of_experience, # level of experience
+                "additionalRequirements": job_details.additional_requirements, # additional requirements
+                "location": job_details.location, # job location
+                "timings": job_details.timings, # job timings
+                "posted at": job_details.created_at.strftime("%b %d, %Y - %I:%M %p"), # Format: Dec 16, 2025 - 04:38 PM
+            }
+        return Response({"success": True, "message": f" Candiadte's watchlist delievered" ,
+                     "Candodate's watchlist": wachlist }, status=200)    
+    
+    except Candidate.DoesNotExist:
+        print("Candidate not found")
+        return Response({"success": False, "message": "Candidate not found"}, status=404)
+    
 
 # --------------------- COMPANY ROUTES ---------------------
 

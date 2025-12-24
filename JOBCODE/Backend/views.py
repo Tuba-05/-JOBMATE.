@@ -16,7 +16,6 @@ def register(request):
     """ function takes user inputs for sign up and stores to DB depending of role company/ candidate """
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
-
     try:
         registeredUser_data = request.data
         username = registeredUser_data.get("username")
@@ -33,14 +32,12 @@ def register(request):
                     password=hashed_password,
                     role="company",
                 )
-
                 Company.objects.create(
                     user=user,
                     address=registeredUser_data.get("companyAddress"),
                     contact=registeredUser_data.get("contactNumber"),
                     website=registeredUser_data.get("companyWebsite"),
                 )
-
             else:  # Candidate mode
                 user = CustomUser.objects.create(
                     username=username,
@@ -48,20 +45,18 @@ def register(request):
                     password=hashed_password,
                     role="candidate",
                 )
-
                 Candidate.objects.create(
                     user=user,
                 )
-
             # sending successful response
             return Response({"success": True, "message": "Record added successfully.", "user_id": user.id,}
                             , status=201)
-
         else:
             return Response({"success": False, "message": "Record already exists"}, status=400)
 
     except Exception as e:
-        return Response({"success": False, "message": str(e)})
+        print("register", e)
+        return Response({"success": False, "message": "Internal server error."})
 
 
 @api_view(["POST"])
@@ -74,21 +69,26 @@ def login(request):
     password = loginedUser_data.get("password")
     try:
         user = CustomUser.objects.get(email=email)
+        if not check_password(password, user.password):  # if password not matches with DB passowrd
+            print("invalid password")
+            return Response({"success": False, "message": "Invalid password"}, status=401)
+
+        if user.role == "candidate":  # candidate log in
+            print("Candidate logged in")
+            return Response({"success": True, "message": "Candidate logged in", "role": "candidate",
+                        "user_id": user.id,},status=201)
+            
+        else:  # company logged in
+            print("Company logged in")
+            return Response({"success": True, "message": "Company logged in", "role": "company",
+                        "user_id": user.id,},status=201)
+        
     except CustomUser.DoesNotExist:
         return Response({"error": "User not found"}, status=404)    
-    if not check_password(password, user.password):  # if password not matches with DB passowrd
-        print("invalid password")
-        return Response({"success": False, "message": "Invalid password"}, status=401)
-
-    if user.role == "candidate":  # candidate log in
-        print("Candidate logged in")
-        return Response({"success": True, "message": "Candidate logged in", "role": "candidate",
-                    "user_id": user.id,},status=201)
-        
-    else:  # company logged in
-        print("Company logged in")
-        return Response({"success": True, "message": "Company logged in", "role": "company",
-                    "user_id": user.id,},status=201)
+    
+    except Exception as e:
+        print("login", e)
+        return Response({"success": False, "message": f"Internal server error"}, status=500)
         
 
 # --------------------- CANDIDATE ROUTES ---------------------
@@ -106,14 +106,19 @@ def check_resume(request):
             candidate = Candidate.objects.get(user_id=candidate_id)
             if not candidate.resume_link:
                 print("Resume not found")
-                return Response({"success": False, "message": "Resume not found", "user_id": candidate_id,}, status=404)
+                return Response({"success": False, "message": "Resume not found", "user_id": candidate_id,}, 
+                                status=404)
             else:
                 print("Resume already uploaded")
-                return Response({"success": True, "message": "Resume already uploaded", "user_id": candidate_id,}, status=200)
+                return Response({"success": True, "message": "Resume already uploaded", "user_id": candidate_id,}, 
+                                status=200)
         
         except Candidate.DoesNotExist:
             print("Candidate not found")
             return Response({"success": False, "message": "Candidate not found"}, status=404)
+        except Exception as e:
+            print("check resume", e)
+            return Response({"success": False, "message": f"Internal server error"}, status=500)
         
 
 @api_view(["POST"])
@@ -146,7 +151,7 @@ def upload_resume(request):
     
     except Exception as e:
         print("Supabase upload error:", e)
-        return Response({"success": False, "message": str(e)}, status=500)
+        return Response({"success": False, "message": 'Internal server error.'}, status=500)
 
     try:  # saving resume url in Candidate DB
         candidate = Candidate.objects.get(user_id=candidate_id)
@@ -159,6 +164,9 @@ def upload_resume(request):
     except Candidate.DoesNotExist:
         print("Candidate not found")
         return Response({"success": False, "message": "Candidate not found"}, status=404)
+    except Exception as e:
+        print("upload resume", e)
+        return Response({"success": False, "message": f"Internal server error"}, status=500)
 
 
 @api_view(['POST'])
@@ -182,12 +190,16 @@ def display_profile_info(request): # resume display
         signed_url = signed_data["signedURL"]
         print("Signed URL:", signed_url)
 
-        return Response({"success": True, "message": "Profile info fetched", "user_id": candidate_id, "resume_url": signed_url  # Send STRING only
+        return Response({"success": True, "message": "Profile info fetched", "user_id": candidate_id, 
+                         "resume_url": signed_url  # Send STRING only
                          }, status=200)
         
     except Candidate.DoesNotExist:
         print("Candidate not found")
         return Response({"success": False, "message": "Candidate not found"}, status=404)
+    except Exception as e:
+        print("display profile info", e)
+        return Response({"success": False, "message": f"Internal server error"}, status=500)
 
 
 @api_view(['POST'])
@@ -204,17 +216,6 @@ def toggle_jobs(request):
         
         # Use the field name 'save_jobs' defined in your Candidate model, then
         # use id=job_id in filter to check if this specific job is already linked
-        
-        if data_to_be_toggled.get("state") == 'saved':
-            if candidate.saved_job.filter(id=job_id).exists(): # dont need to saved job again
-                print("Job already exists in list")
-                return Response({"success": True, "message": "Job already exists in list",
-                                "user_id": candidate_id,}, status=200)
-            else: # ADD/ SAVE job to applied list/ saved list
-                candidate.saved_jobs_by_candidates.add(job_id)  
-                print("Job added to saved list")
-                return Response({"success": True, "message": "Job added to saved list",
-                                "user_id": candidate_id,}, status=200)
             
         if data_to_be_toggled.get("state") == 'homepage':
             if candidate.saved_job.filter(id=job_id).exists(): # REMOVE job from saved list
@@ -224,15 +225,28 @@ def toggle_jobs(request):
                              "user_id": candidate_id,}, status=200)
             else:
                 return Response({"sucess": False, "message": 'this job does not exists in your list.'})
+            
+        else:
+            if candidate.saved_job.filter(id=job_id).exists(): # dont need to saved job again
+                print("Job already exists in list")
+                return Response({"success": True, "message": "Job already exists in list",
+                                "user_id": candidate_id,}, status=200)
+            else: # ADD/ SAVE job to saved list
+                candidate.saved_jobs_by_candidates.add(job_id)  
+                print("Job added to saved list")
+                return Response({"success": True, "message": "Job added to saved list",
+                                "user_id": candidate_id,}, status=200)   
 
     except Candidate.DoesNotExist: 
         return Response({"success": False, "message": "Candidate not found"}, status=404)
     except Exception as e:
-        return Response({"success": False, "message": str(e)}, status=500)
+        print("toggle jobs", e)
+        return Response({"success": False, "message": "Internal server error."}, status=500)
+
 
 @api_view(['POST'])
 def applied_to_jobs(request):
-    """ function send number of jobs applied by candidate to display on frontend """
+    """ function save jobs applied by candidate in DB send from frontend """
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
     
@@ -245,7 +259,6 @@ def applied_to_jobs(request):
         job = JobVacancies.objects.get(id= job_id) # get job object
         # check if candidate has applied to the job
         if job.candidates_applied.filter(id=candidate.id).exists(): # candidate has applied
-            job.candidates_applied.remove(candidate.id)  # add candidate to job's applied list
             return Response({"success": True, "message": "Already applied to this job",
                              "user_id": candidate_id,}, status=200)
         else: # candidate has not applied
@@ -253,49 +266,70 @@ def applied_to_jobs(request):
             return Response({"success": True, "message": "Sucessfully applied to this job",
                              "user_id": candidate_id,}, status=200)
          
-    except Candidate.DoesNotExist or JobVacancies.DoesNotExist: 
+    except (Candidate.DoesNotExist , JobVacancies.DoesNotExist): 
         return Response({"success": False, "message": "Candidate -OR- Job not found"}, status=404)
     except Exception as e:
-        return Response({"success": False, "message": str(e)}, status=500)    
+        print("applied to jobs", e)
+        return Response({"success": False, "message": "Internal server error."}, status=500)    
 
 
 @api_view(['POST'])
 def wachlist(request):
-    """ function send user saved jobs to watchlist page"""
+    """ function send user saved jobs and applied jobs to frontend """
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
     candidate_id = request.data.get('UserId')
     try:
         candidate = Candidate.objects.get(user_id= candidate_id)
-        save_jobs = candidate.saved_jobs.all() # Get All Saved Jobs, a QuerySet of JobVacancies objects
-        job_ids = candidate.save_jobs.values_list("id", flat=True) # Get Only Saved Job IDs
+        # Get a QuerySet of objects, Intermediary Tables (also called Junction or Link tables).
+        applied_job_ids = candidate.applied_jobs.values_list("id", flat=True)
+        saved_job_ids = candidate.save_jobs.values_list("id", flat=True) 
+
         # job_ids = list(job_ids)
-        watchlist = {}
-        for id in job_ids:
-            job_details = JobVacancies.objects.get(id= id)
-            watchlist[job_details['id']] = {
-                "company name" : job_details.company.user.username,
-                "Job title" : job_details.job_title,
-                "skillsRequired": job_details.skills_required, # skills required
-                "levelOfExperience": job_details.level_of_experience, # level of experience
-                "additionalRequirements": job_details.additional_requirements, # additional requirements
-                "location": job_details.location, # job location
-                "timings": job_details.timings, # job timings
-                "posted at": job_details.created_at.strftime("%b %d, %Y - %I:%M %p"), # Format: Dec 16, 2025 - 04:38 PM
+        SaveJobs = {}, AppliedJobs = {}
+        for id in saved_job_ids:
+            saved_job_details = JobVacancies.objects.get(id= id)
+            SaveJobs[saved_job_details['id']] = {
+                "company name" : saved_job_details.company.user.username,
+                "Job title" : saved_job_details.job_title,
+                "skillsRequired": saved_job_details.skills_required, # skills required
+                "levelOfExperience": saved_job_details.level_of_experience, # level of experience
+                "additionalRequirements": saved_job_details.additional_requirements, # additional requirements
+                "location": saved_job_details.location, # job location
+                "timings": saved_job_details.timings, # job timings
+                "posted at": saved_job_details.created_at.strftime("%b %d, %Y - %I:%M %p"), # Format: Dec 16, 2025 - 04:38 PM
+            }
+        for id in applied_job_ids:
+            applied_job_details = JobVacancies.objects.get(id = id)
+            AppliedJobs[applied_job_details['id']] = {
+                "company name" : saved_job_details.company.user.username,
+                "Job title" : saved_job_details.job_title,
+                "skillsRequired": saved_job_details.skills_required, # skills required
+                "levelOfExperience": saved_job_details.level_of_experience, # level of experience
+                "additionalRequirements": saved_job_details.additional_requirements, # additional requirements
+                "location": saved_job_details.location, # job location
+                "timings": saved_job_details.timings, # job timings
+                "posted at": saved_job_details.created_at.strftime("%b %d, %Y - %I:%M %p"), # Format: Dec 16, 2025 - 04:38 PM
             }
         return Response({"success": True, "message": f" Candiadte's watchlist delievered" ,
-                     "Candodate's watchlist": wachlist }, status=200)    
+                        "candidate_watchlist": {
+                            "saved_jobs": SaveJobs,    # This would be list of dictionaries
+                            "applied_jobs": AppliedJobs # This would be list of dictionaries
+                        }}, status=200)    
     
     except Candidate.DoesNotExist:
         print("Candidate not found")
         return Response({"success": False, "message": "Candidate not found"}, status=404)
+    except Exception as e:
+        print("watchlist", e)
+        return Response({"success": False, "message": f"Internal server error"}, status=500)
     
 
 # --------------------- COMPANY ROUTES ---------------------
 
 @api_view(['POST'])
 def add_vacancy(request):
-    """ function stores job vacancies in DB from frontend"""
+    """ function stores job vacancies in DB send from frontend """
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
 
@@ -327,12 +361,16 @@ def add_vacancy(request):
 
     except Company.DoesNotExist:
         print("Company not found")
-        return Response({"success": False, "message": "Company not found"}, status=404)        
+        return Response({"success": False, "message": "Company not found"}, status=404)  
+
+    except Exception as e:
+        print("add vacancay", e)
+        return Response({"success": False, "message": f"{str(e)}, no job vacancies list"}, status=500)      
             
 
 @api_view(['POST'])
 def display_vacancies(request):
-    """ function fetches job vacancies from DB to display on frontend"""
+    """ function fetches job vacancies from DB for frontend display """
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
     try:
@@ -357,8 +395,8 @@ def display_vacancies(request):
                      "jobs": job_data }, status=200)
 
     except Exception as e:
-        print("Error fetching job vacancies:", e)
-        return Response({"success": False, "message": f"{str(e)}, no job vacancies list"}, status=500)
+        print("diaplay vacancies", e)
+        return Response({"success": False, "message": f"Internal server error."}, status=500)
 
 @api_view(['POST'])
 def add_tests(request):
@@ -389,3 +427,38 @@ def add_tests(request):
     except JobVacancies.DoesNotExist:
         print("Job vacancy not found")
         return Response({"success": False, "message": "Job vacancy not found"}, status=404)
+    except Exception as e:
+        print("add tests", e)
+        return Response({"success": False, "message": f"Internal server error."}, status=500)
+    
+
+@api_view(['POST'])    
+def save_test_scores(request):
+    """ function saves test scores in DB send from frontend """
+    if request.method != "POST":  # invalid http method
+        return Response({"error": "Invalid request method"}, status=400)
+    scores_data =request.data
+    candidate_id = scores_data.get("UserId")
+    company_test_id =  scores_data.get("CompanyTestID")
+    test_marks = scores_data.get("TotalMarks")  
+    score = scores_data.get("ObtainedMarks")
+    try:
+        candidate = Candidate.objects.get(user_id = candidate_id)
+        company_test = CompanyTests.objects.get(id = company_test_id)
+        if company_test and candidate:
+            Test_scores = TestScores.objects.create(
+                candidate = candidate,
+                test_template = company_test,
+                test_marks = test_marks,
+                Test_scores = score           
+            )
+            print("Test Scores added successfully")
+            return Response({"success": True, "message": "Test Scores added successfully.", "Candidate Id" : candidate_id,
+                             "Company Test Id": company_test.id, "Test Scores Id" : Test_scores.id}, status=201) 
+           
+    except JobVacancies.DoesNotExist:
+        print("Job vacancy not found")
+        return Response({"success": False, "message": "Job vacancy not found"}, status=404)
+    except Exception as e:
+        print("add tests", e)
+        return Response({"success": False, "message": f"Internal server error."}, status=500)

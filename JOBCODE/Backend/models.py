@@ -21,6 +21,7 @@ class CustomUser(models.Model):
 class Candidate(models.Model):
     # PK is assigned default by Django as 'id'
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE) # ← UNIQUE / acts as user_id
+                                                        # Intermediary Table
     save_jobs = models.ManyToManyField("JobVacancies", related_name="saved_jobs",) # list of saved job ids
     # full_name = models.CharField(max_length=150, null=False, blank=False) # must
     profession = models.CharField(max_length=50, null=True, blank=True) # optional
@@ -42,14 +43,14 @@ class Company(models.Model):
 
 
 class JobVacancies(models.Model):
-    id = models.AutoField(primary_key=True) # job id
+    id = models.AutoField(primary_key=True) # job id             # Intermediary Table
     candidates_applied = models.ManyToManyField(Candidate, related_name="applied_jobs",) # list of candidate ids
     company = models.ForeignKey(Company, on_delete=models.CASCADE) # company id
     job_title = models.TextField(null=False, blank=False) # must
     skills_required = models.TextField(null=False, blank=False) # must
     level_of_experience = models.TextField(null=False, blank=False) # must
     additional_requirements = models.TextField(null=True, blank=True) # optional
-    location = models.TextField(null=False, blank=False) # must
+    location = models.TextField(null=False, blank=False) # must 
     timings = models.TextField(null=False, blank=False) # must
     created_at = models.DateTimeField(auto_now_add=True, )
     updated_at = models.DateTimeField(auto_now=True, )

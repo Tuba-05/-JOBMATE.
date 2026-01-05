@@ -125,7 +125,10 @@ function LogSign() {
       alert("Please fill in your email and password.");
     }
   };
-
+  // forgot password
+  const trigger_verif_code = () =>{
+    navigate("/veri-code");
+  }
   return (
     <div
       className={`content justify-content-center align-items-center d-flex shadow-lg ${
@@ -256,6 +259,11 @@ function LogSign() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+          </div>
+          <div className="forgot-password">
+            <a href="#" className="forgot-link" onClick={trigger_verif_code}>
+              forgot your passowrd?
+            </a>
           </div>
           {/* login form submit button */}
           <div className="input-group mb-3 justify-content-center">

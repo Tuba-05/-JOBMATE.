@@ -245,6 +245,23 @@ input:focus::placeholder {
     transform: translateY(-20px);
     opacity: 0;
 }
+.forgot-password {
+  text-align: right;
+  margin-top: -20px;
+}
+
+.forgot-link {
+  font-size: 14px;
+  color: rgba(18, 18, 18, 0.964);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.forgot-link:hover {
+  color: rgba(18, 18, 18, 0.964);
+  text-decoration: underline;
+}
+
 /* Existing styles... */
 
 @media (max-width: 768px) {

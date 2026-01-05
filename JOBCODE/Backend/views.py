@@ -90,7 +90,9 @@ def login(request):
         print("login", e)
         return Response({"success": False, "message": f"Internal server error"}, status=500)
         
-
+@api_view(['POST'])
+def forgot_password(request):
+    """ function takes email of user, verify it by generating code then change existing password to new one."""
 # --------------------- CANDIDATE ROUTES ---------------------
 
 @api_view(["POST"])
@@ -286,7 +288,8 @@ def wachlist(request):
         saved_job_ids = candidate.save_jobs.values_list("id", flat=True) 
 
         # job_ids = list(job_ids)
-        SaveJobs = {}, AppliedJobs = {}
+        SaveJobs = {}
+        AppliedJobs = {}
         for id in saved_job_ids:
             saved_job_details = JobVacancies.objects.get(id= id)
             SaveJobs[saved_job_details['id']] = {

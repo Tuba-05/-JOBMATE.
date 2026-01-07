@@ -1,6 +1,7 @@
 # from django.http import JsonResponse
 # from django.views.decorators.csrf import csrf_exempt
 from .models import CustomUser, Company, Candidate, JobVacancies, CompanyTests, TestScores
+from .ottp import generate_random_password, send_mail
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser # for upload files & to parse data from file 
@@ -93,6 +94,27 @@ def login(request):
 @api_view(['POST'])
 def forgot_password(request):
     """ function takes email of user, verify it by generating code then change existing password to new one."""
+    if request.method != "POST":  # invalid http method
+        return Response({"error": "Invalid request method"}, status=400)
+    user_data = request.data
+    email = user_data.get("email")
+    try:
+        if email:
+            user = CustomUser.objects.get(email= email)
+            ottp_code = generate_random_password()
+            email_sent= send_mail(ottp_code, user.email)
+            if email_sent:
+                return Response({"success": True,"message": "Ottp has been sent to email", 
+                                 "OttpCode": ottp_code}, status=201)
+            else:
+                print("Failed to send email")  
+                return Response({"success": False,"message": "failed to sent code ", }, status=201)  
+    except CustomUser.DoesNotExist:
+        return Response({"success": False, "message": "User not found"}, status=404)
+    except Exception as e:
+        print("forgot password", e)
+        return Response({"success": False, "message": f"Internal server error"}, status=500)   
+
 # --------------------- CANDIDATE ROUTES ---------------------
 
 @api_view(["POST"])
@@ -101,9 +123,9 @@ def check_resume(request):
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
 
-    user_data = request.data
-    if user_data.get("role") == "candidate":
-        candidate_id = user_data.get("UserId")
+    candidate_data = request.data
+    if candidate_data.get("role") == "candidate":
+        candidate_id = candidate_data.get("UserId")
         try:
             candidate = Candidate.objects.get(user_id=candidate_id)
             if not candidate.resume_link:
@@ -130,9 +152,9 @@ def upload_resume(request):
     if request.method != "POST":  # invalid http method
         return Response({"error": "Invalid request method"}, status=400)
 
-    user_data = request.data
-    candidate_id = user_data.get("UserId")
-    file = user_data.get("resume")
+    candidate_data = request.data
+    candidate_id = candidate_data.get("UserId")
+    file = candidate_data.get("resume")
 
     if not file:  # if file not found
         return Response({"error": "No file uploaded"}, status=404)

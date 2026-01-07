@@ -42,3 +42,4 @@ This project was developed as part of an academic and skill-building initiative,
 ---
 
 ## Project Structure
+jobMate/ │ ├── jobmate-frontend/ │   ├── src/ │   │   ├── components/ │   │   ├── pages/ │   │   ├── assets/ │   │   ├── App.jsx │   │   └── index.js │   └── package.json │ ├── jobmate-backend/ │   ├── manage.py │   ├── jobmate/ │   ├── users/ │   ├── jobs/ │   └── requirements.txt │ └── README.md

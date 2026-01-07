@@ -1,7 +1,7 @@
 # JobMate
 
 ## Overview
-JobMate is a LinkedIn-style job portal web application developed using **React.js**, **Django**, and **PostgreSQL**. The platform connects job seekers with companies by allowing users to create profiles, upload resumes, search for jobs, and apply online, while companies can register and post job vacancies.
+JobMate is (inspired from LinkedIn) a job portal web application developed using **React.js**, **Django**, and **PostgreSQL**. The platform connects job seekers with companies by allowing users to create profiles, upload resumes, search for jobs, and apply online, while companies can register and post job vacancies.
 
 This project was developed as part of an academic and skill-building initiative, focusing on full-stack web development, RESTful APIs, and database integration.
 

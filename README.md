@@ -41,5 +41,45 @@ This project was developed as part of an academic and skill-building initiative,
 
 ---
 
-## Project Structure
-jobMate/ │ ├── jobmate-frontend/ │   ├── src/ │   │   ├── components/ │   │   ├── pages/ │   │   ├── assets/ │   │   ├── App.jsx │   │   └── index.js │   └── package.json │ ├── jobmate-backend/ │   ├── manage.py │   ├── jobmate/ │   ├── users/ │   ├── jobs/ │   └── requirements.txt │ └── README.md
+## Usage
+
+- Job seekers can register, log in, complete profiles, and upload resumes.
+- Users can search and apply for jobs using the React frontend.
+- Companies can post and manage job vacancies.
+- The React frontend communicates with the Django backend using REST APIs.
+
+---
+
+## Future Enhancements
+
+- JWT-based authentication and authorization
+- Advanced job filtering and search
+- Resume parsing and skill matching
+- Email notifications for applications
+- Admin dashboard
+- Deployment using Docker and cloud services
+
+---
+
+## Academic Context
+
+This project was developed as part of the **Computer & Information Systems Engineering** curriculum to demonstrate:
+- Full-stack web development
+- RESTful API design
+- Database management using PostgreSQL
+- Practical job portal system implementation
+
+---
+
+## Author
+
+**Tuba Naushad**  
+Bachelor’s in Computer & Information Systems Engineering  
+Third Year Student  
+
+---
+
+## License
+
+This project is intended for educational purposes only.
+

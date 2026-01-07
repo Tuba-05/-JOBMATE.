@@ -61,6 +61,12 @@ This project was developed as part of an academic and skill-building initiative,
 
 ---
 
+## Project Type
+
+**Full-Stack Web Application (Django + React)**
+
+---
+
 ## Academic Context
 
 This project was developed as part of the **Computer & Information Systems Engineering** curriculum to demonstrate:

@@ -1,7 +1,7 @@
 # from django.http import JsonResponse
 # from django.views.decorators.csrf import csrf_exempt
-from .models import CustomUser, Company, Candidate, JobVacancies, CompanyTests, TestScores
-from .ottp import generate_random_password, send_mail
+from ..models import CustomUser, Company, Candidate, JobVacancies, CompanyTests, TestScores
+from ..ottp import generate_random_password, send_mail
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser # for upload files & to parse data from file 
@@ -129,7 +129,7 @@ def check_resume(request):
         try:
             candidate = Candidate.objects.get(user_id=candidate_id)
             if not candidate.resume_link:
-                print("Resume not found")
+                print("Resume not f ound")
                 return Response({"success": False, "message": "Resume not found", "user_id": candidate_id,}, 
                                 status=404)
             else:

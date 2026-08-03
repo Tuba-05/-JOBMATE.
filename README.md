@@ -58,16 +58,41 @@ This project was developed as an academic and skill-building initiative focusing
 
 ## 📂 Folder Structure
 ```text
-JobMate/
-├── backend/            # Django Backend Server
-│   ├── manage.py
-│   ├── jobmate/        # Main configuration folder
-│   └── api/            # Apps handling models, views & serializers
-├── frontend/           # React Frontend Application
-│   ├── package.json
-│   ├── public/
-│   └── src/            # Components, pages, and assets
-└── README.md
+JOBCODE/                  # Root project directory
+├── Backend/              # Django Backend Application
+│   ├── JOBCODE/          # Django project configuration folder
+│   │   ├── __init__.py
+│   │   ├── asgi.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── views.py
+│   │   └── wsgi.py
+│   ├── migrations/       # Database migrations folder
+│   ├── views/            # Backend API views and business logic
+│   ├── __init__.py
+│   ├── admin.py          # Django admin panel configuration
+│   ├── apps.py           # App configuration
+│   ├── models.py         # Relational database models (PostgreSQL)
+│   ├── ottp.py           # OTP generation / Auth utility script
+│   ├── samples.py        # Mock data / Sample functions
+│   ├── tests.py          # Backend test suites
+│   ├── urls.py           # API routes and endpoints routing
+│   ├── firebase_config.py # Firebase services initialization
+│   ├── supabase_client.py # Supabase storage & DB configuration
+│   ├── manage.py          # Django management script
+│   ├── db.sqlite3         # Development SQLite database (backup/test)
+│   ├── requirements.txt   # Python library dependencies
+│   └── .gitignore
+├── Frontend/             # React Frontend (Vite) Application
+│   ├── public/           # Static assets (favicons, logos)
+│   ├── src/              # React source code (components, pages, styles)
+│   ├── eslint.config.js  # ESLint rules and settings
+│   ├── index.html        # Main entry HTML file
+│   ├── package-lock.json
+│   ├── package.json      # React dependencies and build scripts
+│   ├── vite.config.js    # Vite configuration
+│   └── .gitignore
+└── README.md             # Project main README file
 ```
 
 ---

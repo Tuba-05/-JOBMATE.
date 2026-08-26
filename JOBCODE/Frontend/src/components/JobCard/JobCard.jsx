@@ -397,28 +397,13 @@ const JobCard = () => {
                     )}
                   </div>
 
-                  {/* Card Action Row */}
+                  {/* Card Action Row - Clean View Details Button */}
                   <div className="card-actions-wrapper">
                     <button
-                      className="btn-view-details"
+                      className="btn-view-details full-width-details-btn"
                       onClick={(e) => handleOpenDetails(job, e)}
                     >
                       View Details
-                    </button>
-
-                    <button
-                      className={`btn-apply-job ${isApplied ? "applied-btn" : ""}`}
-                      onClick={(e) => handleApplyClick(job, e)}
-                      disabled={isApplied}
-                    >
-                      {isApplied ? "Applied" : "Apply Now"}
-                    </button>
-
-                    <button
-                      className={`btn-save-job ${isSaved ? "saved-active" : ""}`}
-                      onClick={(e) => handleSaveJob(job, e)}
-                    >
-                      {isSaved ? "Saved" : "Save"}
                     </button>
                   </div>
                 </div>

@@ -496,6 +496,27 @@
   transition: all 0.3s ease;
 }
 
+.full-width-details-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #1cb5ab 0%, #0d9488 100%);
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(28, 181, 171, 0.3);
+}
+
+.full-width-details-btn:hover {
+  background: linear-gradient(135deg, #22d3ee 0%, #14b8a6 100%);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(34, 211, 238, 0.5);
+}
+
 .btn-view-details:hover, .btn-vault-details:hover {
   background: rgba(255, 255, 255, 0.22);
   border-color: #22d3ee;

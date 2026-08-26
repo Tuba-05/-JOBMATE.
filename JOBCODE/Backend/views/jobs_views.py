@@ -141,19 +141,20 @@ def add_vacancy(request):
 @api_view(["POST", "GET"])
 @permission_classes([AllowAny])
 def display_vacancies(request):
-    """Public Unprotected route: Fetches job vacancies for visitors/candidates."""
+    """Public Unprotected route: Fetches job vacancies for visitors/candidates (Optimized query)."""
     try:
-        job_vacancies_list = JobVacancies.objects.all().order_by("-created_at")
+        job_vacancies_list = JobVacancies.objects.select_related("company__user").prefetch_related("companytests_set").all().order_by("-created_at")
         job_data = {}
         for job in job_vacancies_list:
             company_name = "Featured Employer"
             try:
-                if job.company and job.company.user:
+                if job.company and hasattr(job.company, "user") and job.company.user:
                     company_name = job.company.user.username
             except Exception:
                 pass
 
-            test_obj = CompanyTests.objects.filter(job=job).first()
+            tests = list(job.companytests_set.all())
+            test_obj = tests[0] if tests else None
 
             job_data[str(job.id)] = {
                 "companyId": job.company_id,

@@ -1,60 +1,99 @@
-# from django.http import JsonResponse
-# from django.views.decorators.csrf import csrf_exempt
-from ..models import CustomUser, Company, Candidate, JobVacancies, CompanyTests, TestScores
-from ..ottp import generate_random_password, send_mail
-from rest_framework.decorators import api_view, parser_classes
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser # for upload files & to parse data from file 
-from django.contrib.auth.hashers import (make_password, check_password, )  # for hash password
-from supabase_client import supabase
-import uuid  # Universally Unique Identifier, generates a 128-bit unique value(string)
-from datetime import datetime
+from django.contrib.auth.hashers import make_password
+from Backend.models import CustomUser, Company, Candidate
+from Backend.config.supabase_client import supabase
+from Backend.utils.jwt_utils import generate_jwt_tokens
 
-# @csrf_exempt  # disable CSRF just for API testing (remove later if you use tokens)
+
 @api_view(["POST"])
 def register(request):
-    """ function takes user inputs for sign up and stores to DB depending of role company/ candidate """
-    if request.method != "POST":  # invalid http method
-        return Response({"error": "Invalid request method"}, status=400)
+    """
+    Registers a new candidate/company user and returns JWT Access & Refresh tokens.
+    """
+    if request.method != "POST":
+        return Response({"error": "Invalid request method"}, status=405)
+
     try:
-        registeredUser_data = request.data
-        username = registeredUser_data.get("username")
-        email = registeredUser_data.get("email")
-        password = registeredUser_data.get("password")
-        hashed_password = make_password(password)  # making password hashed
+        registered_data = request.data
+        username = registered_data.get("username", "").strip()
+        email = registered_data.get("email", "").strip().lower()
+        password = registered_data.get("password", "").strip()
 
-        if not CustomUser.objects.filter(email=email).exists():
+        # Input Validation
+        if not username or not email or not password:
+            return Response(
+                {"success": False, "message": "Username, email, and password are required."},
+                status=400,
+            )
 
-            if registeredUser_data.get("isHiringDeskMode"):  # Company mode
-                user = CustomUser.objects.create(
-                    username=username,
-                    email=email,
-                    password=hashed_password,
-                    role="company",
-                )
-                Company.objects.create(
-                    user=user,
-                    address=registeredUser_data.get("companyAddress"),
-                    contact=registeredUser_data.get("contactNumber"),
-                    website=registeredUser_data.get("companyWebsite"),
-                )
-            else:  # Candidate mode
-                user = CustomUser.objects.create(
-                    username=username,
-                    email=email,
-                    password=hashed_password,
-                    role="candidate",
-                )
-                Candidate.objects.create(
-                    user=user,
-                )
-            # sending successful response
-            return Response({"success": True, "message": "Record added successfully.", "user_id": user.id,}
-                            , status=201)
+        if "@" not in email or "." not in email:
+            return Response(
+                {"success": False, "message": "Please enter a valid email address."},
+                status=400,
+            )
+
+        if len(password) < 6:
+            return Response(
+                {"success": False, "message": "Password must be at least 6 characters long."},
+                status=400,
+            )
+
+        if CustomUser.objects.filter(email=email).exists():
+            return Response(
+                {"success": False, "message": "An account with this email already exists."},
+                status=400,
+            )
+
+        hashed_password = make_password(password)
+        is_company = registered_data.get("isHiringDeskMode") or registered_data.get("role") == "company"
+
+        if is_company:
+            user = CustomUser.objects.create(
+                username=username,
+                email=email,
+                password=hashed_password,
+                role="company",
+            )
+            Company.objects.create(
+                user=user,
+                address=registered_data.get("companyAddress", "").strip(),
+                contact=registered_data.get("contactNumber", "").strip(),
+                website=registered_data.get("companyWebsite", "").strip(),
+            )
+            role = "company"
         else:
-            return Response({"success": False, "message": "Record already exists"}, status=400)
+            user = CustomUser.objects.create(
+                username=username,
+                email=email,
+                password=hashed_password,
+                role="candidate",
+            )
+            Candidate.objects.create(user=user)
+            role = "candidate"
+
+        # Initialize Session & Generate JWT Tokens
+        request.session["user_id"] = user.id
+        request.session["role"] = role
+        request.session.modified = True
+
+        tokens = generate_jwt_tokens(user)
+
+        return Response(
+            {
+                "success": True,
+                "message": "User registered successfully.",
+                "tokens": tokens,
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "role": role,
+                },
+            },
+            status=201,
+        )
 
     except Exception as e:
-        print("register", e)
-        return Response({"success": False, "message": "Internal server error."})
-
+        print("Register Error:", e)
+        return Response({"success": False, "message": "Internal server error."}, status=500)

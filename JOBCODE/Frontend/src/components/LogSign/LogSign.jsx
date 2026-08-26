@@ -9,7 +9,8 @@ function LogSign() {
   const navigate = useNavigate(); // Initialize navigate hook
   const mode = location.state?.mode || "jobseeker"; // Retrieve mode from state or default to "jobseeker"
   const [isSignupActive, setIsSignupActive] = useState(false);
-  const isHiringDeskMode = mode === "hiring"; // Check if the mode is "hiring"
+  const [registerRole, setRegisterRole] = useState(mode === "hiring" ? "company" : "candidate");
+  const isHiringDeskMode = registerRole === "company";
 
   // States for form fields
   const [username, setUsername] = useState("");
@@ -19,15 +20,13 @@ function LogSign() {
   const [contactNumber, setContactNumber] = useState("");
   const [companyWebsite, setCompanyWebsite] = useState("");
 
-  // handling submit button for copmany sign up
+  // handling submit button for signup
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    // if any field is empty
     if (!email || !password || !username) {
       alert("Please fill all required fields.");
       return;
     }
-    // For hiring desk mode, validate additional fields
     if (
       isHiringDeskMode &&
       (!companyAddress || !contactNumber || !companyWebsite)
@@ -37,6 +36,7 @@ function LogSign() {
     }
     const userDetails = {
       isHiringDeskMode,
+      role: registerRole,
       username,
       email,
       password,
@@ -55,16 +55,9 @@ function LogSign() {
       });
       const data = await response.json(); // <-- READ RESPONSE HERE
 
-      if (data.success) {
-        // Save User ID for later usage
-        localStorage.setItem("UserId", data.user_id);
-        alert("Account created successfully!");
-        if (isHiringDeskMode) {
-          navigate("/company-dashboard");
-        } else {
-          navigate("/cv");
-        }
-        setIsSignupActive(false);
+      if (response.ok && data.success) {
+        alert("Account created successfully! Please sign in.");
+        setIsSignupActive(false); // Switch to Sign In view after registration
       } else {
         alert(data.message || "Account creation failed.");
       }
@@ -74,7 +67,7 @@ function LogSign() {
     }
   };
 
-  //login part for both
+  // Login for both Candidate and Company
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     if (email && password) {
@@ -88,34 +81,23 @@ function LogSign() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(UserLoginDetailes),
         });
-        const data = await response.json(); // <-- READ RESPONSE HERE
-        if (data.success) {
-          console.log("Logged in:", email);
-          if (data.role === "candidate") {
-            const cv_response = await fetch("http://127.0.0.1:8000/api/check-resume/",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  role: data.role,
-                  UserId: data.user_id,
-                }),
-              }
-            );
-            const cv_data = await cv_response.json();
-            if (cv_data.success) {
-              localStorage.setItem("UserId", cv_data.user_id); // candidate user
-              navigate("/Pf");
-            } else {
-              localStorage.setItem("UserId", cv_data.user_id); // candidate user
-              navigate("/cv");
-            }
-          } else {
-            localStorage.setItem("UserId", data.user_id); // company user
-            navigate("/company-dashboard");
+        const data = await response.json();
+        if (response.ok && data.success) {
+          if (data.tokens) {
+            localStorage.setItem("accessToken", data.tokens.access);
+            localStorage.setItem("refreshToken", data.tokens.refresh);
           }
+          const userRole = data.role || data.user?.role;
+          const userId = data.user_id || data.user?.id;
+          const userEmail = data.user?.email || email;
+
+          if (userId) localStorage.setItem("UserId", userId);
+          if (userRole) localStorage.setItem("userRole", userRole);
+          if (userEmail) localStorage.setItem("userEmail", userEmail);
+
+          navigate("/"); // Redirect to Homepage upon login
         } else {
-          alert("Invalid email or password.");
+          alert(data.message || "Invalid email or password.");
         }
       } catch (error) {
         console.error("Login error:", error);
@@ -144,6 +126,23 @@ function LogSign() {
             >
               Create Account
             </h1>
+          </div>
+          {/* Role Selector Tabs (Candidate vs Employer) */}
+          <div className="role-selector-bar mb-3">
+            <button
+              type="button"
+              className={`role-tab-btn ${registerRole === "candidate" ? "active-tab" : ""}`}
+              onClick={() => setRegisterRole("candidate")}
+            >
+              👤 Job Seeker
+            </button>
+            <button
+              type="button"
+              className={`role-tab-btn ${registerRole === "company" ? "active-tab" : ""}`}
+              onClick={() => setRegisterRole("company")}
+            >
+              🏢 Employer
+            </button>
           </div>
           {/* Common fields */}
           <div className="input-group mb-3">

@@ -1,0 +1,22 @@
+[
+  {
+    "username": "tuba_naushad",
+    "email": "tubanaushad2005@gmail.com",
+    "password": "CandidatePass123!",
+    "role": "candidate",
+    "isHiringDeskMode": false,
+    "profession": "Full-Stack Web Developer",
+    "experience": "2 years",
+    "skills": "React.js, Python, Django, PostgreSQL, HTML5, CSS3"
+  },
+  {
+    "username": "ali_khan",
+    "email": "ali.khan@example.com",
+    "password": "CandidatePass123!",
+    "role": "candidate",
+    "isHiringDeskMode": false,
+    "profession": "Frontend Engineer",
+    "experience": "1 year",
+    "skills": "React, JavaScript, TailwindCSS, Figma"
+  }
+]

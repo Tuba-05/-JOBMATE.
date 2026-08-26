@@ -1,140 +1,101 @@
-body {
+/* LogSign.css - Glassmorphic Authentication System */
+
+body, .logsign-page-wrapper {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(to bottom right, #000, #555);
+    min-height: 100vh;
+    width: 100vw;
+    background: linear-gradient(rgba(10, 15, 29, 0.85), rgba(10, 15, 29, 0.95)),
+                url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat fixed;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    height: 100vh;
-    font-weight: bolder;
-    color: #000;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    color: #ffffff;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 .content {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 40px;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-radius: 40px !important;
     position: relative;
     overflow: hidden;
-    width: 50vw;
-    min-height: 480px;
-    max-width: 100%;
-    color: #000;
-    font-weight: bolder;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-    border: 2px solid #fff;
+    width: 900px;
+    min-height: 520px;
+    max-width: 95vw;
+    color: #ffffff;
+    transition: all 0.5s ease;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.35) !important;
+    display: flex;
 }
 
 .btn {
     border-radius: 12px;
     padding: 10px 15px;
-    /* color: #000; */
-    font-weight: bolder;
+    font-weight: 600;
     letter-spacing: 0.5px;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .btn:hover {
-    transform: scale(1.05);
+    transform: scale(1.04);
     box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
 }
 
-.signup-btn {
-    font-weight: bolder;
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+.signup-btn, .login-btn {
+    width: 100% !important;
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #1cb5ab 0%, #0d9488 100%) !important;
+    color: #ffffff !important;
+    border: 1.5px solid #ffffff !important;
+    border-radius: 14px !important;
+    padding: 10px 20px !important;
+    box-shadow: 0 4px 15px rgba(28, 181, 171, 0.4) !important;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease !important;
 }
 
-.signup-btn:hover {
-    border: 1px solid rgba(223, 217, 217, 0.5);
-    background-color: rgb(39, 121, 113);
-    color: black;
-}
-
-.login-btn {
-    font-weight: bolder;
-    background-color: rgba(0, 0, 0, 0.29);
-    color: whitesmoke;
-    border: 1px solid rgba(223, 217, 217, 0.5);
-}
-
-.login-btn:hover {
-    border: 1px solid rgba(223, 217, 217, 0.5);
-    background-color: rgb(39, 121, 113);
-    color: rgb(16, 15, 15);
+.signup-btn:hover, .login-btn:hover {
+    background: linear-gradient(135deg, #22d3ee 0%, #14b8a6 100%) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 6px 20px rgba(34, 211, 238, 0.5) !important;
 }
 
 .switch-login-btn, .switch-signup-btn {
-    border-radius: 8px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    font-weight: 600 !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+    border-radius: 14px !important;
+    padding: 10px 24px !important;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease !important;
+    cursor: pointer;
 }
 
-.switch-login-btn {
-    background-color: #222;
-    color: white;
-    border: 1px solid #fff;
-}
-
-.switch-login-btn:hover {
-    background-color: #444;
-    border: 1px solid #03887d;
-}
-
-.switch-signup-btn {
-    background-color: #222;
-    color: white;
-    border: 1px solid #ffffff;
-}
-
-.switch-signup-btn:hover {
-    background-color: #444;
-    border: 1px solid #03887d;
+.switch-login-btn:hover, .switch-signup-btn:hover {
+    background: linear-gradient(135deg, #1cb5ab 0%, #0d9488 100%) !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+    transform: translateY(-2px) scale(1.04) !important;
+    box-shadow: 0 6px 20px rgba(28, 181, 171, 0.6) !important;
 }
 
 .glow-text {
-    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.5);
+    text-shadow: 0px 0px 10px rgba(34, 211, 238, 0.5);
     font-weight: bold;
 }
-
-.content.active {
-    background-color: #222;
-    color: #fff;
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.5);
-}
-
-/* .content.active button {
-    background-color: #222;
-    color: #fff;
-}
-
-.content.active button:hover {
-    background-color: #444;
-} */
 
 .header-text h1 {
     font-size: 32px;
     text-align: center;
     margin: 0;
-    color: inherit; /* Inherit color based on parent */
-}
-
-.forgot {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-}
-
-.forgot small a {
-    color: #fff;
-}
-
-.forgot small a:hover {
-    text-decoration: underline;
+    color: #ffffff;
 }
 
 .right-box {
@@ -149,15 +110,16 @@ body {
     height: 100%;
     overflow: hidden;
     transition: all 0.6s ease-in-out;
-    border-radius: 0 60px 60px 0;
+    border-radius: 0 36px 36px 0;
     z-index: 1000;
 }
 
 .content.active .switch-content {
     transform: translateX(100%);
-    border-radius: 60px 0 0 60px;
+    border-radius: 36px 0 0 36px;
 }
 
+/* Original Sliding Overlay Panel (Hello Again / Welcome) */
 .switch {
     background-color: #ccc;
     height: 100%;
@@ -186,6 +148,18 @@ body {
     transition: all 0.6s ease-in-out;
 }
 
+.switch-panel h1 {
+    font-size: 32px;
+    font-weight: bold;
+    padding: 10px 0;
+    color: #000000;
+}
+
+.switch-panel p {
+    color: #000000;
+    font-weight: bold;
+}
+
 .switch-left {
     transform: translateX(-200%);
 }
@@ -203,96 +177,112 @@ body {
     transform: translateX(200%);
 }
 
+/* Form Input Fields Width & Styling Fix */
 .input-group {
-    color: #000;
-    font-weight: bolder;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    margin-bottom: 1.1rem !important;
+    position: relative;
 }
 
-.input-group input {
-    background-color: #f0f0f0;
-    font-weight: bolder;
-    color: #000;
-    border: 1px solid #ccc;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    padding: 10px;
-    border-radius: 4px;
+.input-group input,
+.input-group .form-control {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+    background-color: #ffffff !important;
+    font-weight: 500 !important;
+    color: #0f172a !important;
+    border: 1.5px solid rgba(28, 181, 171, 0.4) !important;
+    transition: all 0.3s ease !important;
+    padding: 10px 14px !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
+    font-size: 0.9rem !important;
 }
 
-.content.active .input-group input {
-    background-color: #222;
-    color: #151414;
-    border: 1px solid #fff;
-}
-
-.input-group input:focus {
-    border-color: #fff;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.content.active .input-group input:focus {
-    border-color: #fff;
+.input-group input:focus,
+.input-group .form-control:focus {
+    border-color: #22d3ee !important;
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.3) !important;
 }
 
 input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    color: #64748b !important;
+    font-weight: 400 !important;
 }
 
-input:focus::placeholder {
-    transform: translateY(-20px);
-    opacity: 0;
-}
 .forgot-password {
-  text-align: right;
-  margin-top: -20px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin-top: 0.35rem !important;
+    margin-bottom: 1rem !important;
 }
 
 .forgot-link {
-  font-size: 14px;
-  color: rgba(18, 18, 18, 0.964);
-  text-decoration: none;
-  transition: color 0.3s ease;
+    font-size: 0.85rem !important;
+    color: #22d3ee !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
 }
 
 .forgot-link:hover {
-  color: rgba(18, 18, 18, 0.964);
-  text-decoration: underline;
+    color: #ffffff !important;
+    text-decoration: underline !important;
 }
 
-/* Existing styles... */
+/* Role Selector Tabs (Candidate vs Employer) - Smaller Text & Regular Weight */
+.role-selector-bar {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.role-tab-btn {
+    flex: 1;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 8px;
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important; /* Slightly smaller text */
+    font-weight: 500 !important; /* Regular font weight (NOT BOLD) */
+    white-space: nowrap !important; /* Single line */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.role-tab-btn.active-tab {
+    background: linear-gradient(135deg, #1cb5ab 0%, #0d9488 100%);
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(28, 181, 171, 0.45);
+}
 
 @media (max-width: 768px) {
     #content {
-      flex-direction: column; /* Stack items vertically on smaller screens */
+      flex-direction: column;
     }
-  
     .col-md-6 {
-      width: 100%; /* Make columns full width */
-      margin-bottom: 20px; /* Add space between stacked elements */
+      width: 100%;
+      margin-bottom: 20px;
     }
-  
     .header-text h1 {
-      font-size: 24px; /* Adjust heading size for smaller screens */
+      font-size: 24px;
     }
-  
-    .input-group input {
-      font-size: 14px; /* Adjust input font size */
-    }
-  
     .btn {
-      width: 100%; /* Make buttons full width */
+      width: 100%;
     }
-  
-    .switch-content {
-      text-align: center; /* Center align switch content */
-    }
-  }
-  
-  @media (min-width: 769px) {
-    .col-md-6 {
-      width: 50%; /* Keep columns half width on larger screens */
-    }
-  }
+}

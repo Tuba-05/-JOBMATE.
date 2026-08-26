@@ -90,3 +90,18 @@ class TestScores(models.Model):
     updated_at = models.DateTimeField(auto_now=True,)
 
 
+class OTPVerification(models.Model):
+    email = models.EmailField(db_index=True)
+    otp_code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_used = models.BooleanField(default=False)
+
+    def is_valid(self, expiry_minutes=5):
+        if self.is_used:
+            return False
+        now = timezone.now()
+        diff = (now - self.created_at).total_seconds()
+        return diff <= (expiry_minutes * 60)
+
+
+

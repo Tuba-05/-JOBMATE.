@@ -1,222 +1,277 @@
+/* Cv.css - Minimal + Modern + Professional Resume Upload Styling */
+
 .cv-body {
-    background: linear-gradient(135deg, #202c2a, #575b5b);
-    min-height: 60vh;
-    width: 110%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  background: linear-gradient(rgba(10, 15, 29, 0.82), rgba(10, 15, 29, 0.92)),
+              url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
 }
 
 .cv-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: auto;
-    min-height: 50vh;
-    max-width: 600px;
-    padding: 20px;
-    background-image: url('../src/assets/black.jpg');
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(117, 63, 225, 0.983);
-    animation: fadeIn 1s ease;
+  width: 100%;
+  max-width: 650px;
+  background-color: rgba(255, 255, 255, 0.12);
+  border-radius: 36px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  text-align: center;
+  color: #ffffff;
+  box-sizing: border-box;
+  position: relative;
 }
 
-.cv-heading .heading-text {
-    color: #fff;
-    text-align: center;
-    font-size: 30px;
-    margin-bottom: 20px;
-    font-family: 'Protest Strike', sans-serif;
-    animation: slideDown 0.8s ease;
-}
-.cv-input-section {
-    display: inline;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    opacity: 0;
-    animation: fadeInUp 1.2s ease forwards 0.4s;
+.cv-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.file-input {
-    font-weight: bold;
-    color: #fff;
-    font-size: 19px;
-    padding: 10px 20px;
-    margin-top: 40px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    opacity: 0;
-    animation: fadeInUp 1.2s ease forwards 0.5s;
+.heading-text {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.5px;
 }
 
-.file-input:hover {
-    background-color: #333;
-    color: #fff;
+.heading-subtext {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Drag & Drop Dropzone Box */
+.cv-dropzone {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px dashed rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.cv-dropzone:hover, .cv-dropzone.active {
+  border-color: #1cb5ab;
+  background: rgba(28, 181, 171, 0.1);
+  transform: translateY(-2px);
+}
+
+.upload-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: #1cb5ab;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dropzone-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.dropzone-title span {
+  color: #22d3ee;
+  text-decoration: underline;
+}
+
+.dropzone-info {
+  font-size: 0.825rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+/* Selected File Display Badge */
+.selected-file-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 14px;
+  padding: 0.75rem 1.25rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+}
+
+.file-name-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+  color: #0f172a;
+}
+
+.remove-file-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 1.2rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Actions */
+.cv-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: 100%;
 }
 
 .upload-btn {
-    font-family: 'Protest Strike', sans-serif;
-    font-weight: 600;
-    padding: 5px 19px;
-    background-color: #fff;
-    color: #000;
-    border: 2px solid #fd1111be;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    opacity: 0;
-    animation: fadeInUp 1.2s ease forwards 0.6s;
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background: linear-gradient(135deg, #1cb5ab 0%, #0d9488 100%);
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(28, 181, 171, 0.4);
+  letter-spacing: 0.5px;
 }
 
-.upload-btn:hover {
-    background-color: #333;
-    color: #fff;
-    order: 2px solid #ffb672be;
-    transform: scale(1.05);
+.upload-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #22d3ee 0%, #14b8a6 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(34, 211, 238, 0.5);
 }
 
-.cv-progress-section .progress-bar {
-    width: 100%;
-    height: 10px;
-    margin-top: 10px;
-    opacity: 0;
-    animation: fadeInUp 1.2s ease forwards 0.8s;
-    color: aqua;
-}
-
-.progress-bar::-webkit-progress-bar {
-    background-color: #fff;
-}
-
-.progress-bar::-webkit-progress-value {
-    background-color: #28a7bd;
-}
-
-.msg1 {
-    color: #fff;
-    text-align: center;
-    margin-top: 10px;
-    font-size: 20px;
-    font-family: 'Merriweather Sans', sans-serif;
-    font-weight: bold;
-    opacity: 0;
-    animation: fadeIn 1s ease forwards 1s;
-}
-
-.success-icon, .error-icon, .warning-icon {
-    font-size: 2rem;
-}
-
-.cv-message-section {
-    display: inline;
-    align-items: center;
-}
-
-.cv-message-section .msg2 {
-    font-family: "Italianno", cursive;
-    font-size: 46px;
-    margin-bottom: -20px;
-}
-
-.animated-letter {
-    font-family: "Italianno", cursive;
-    color: antiquewhite;
-    font-size: 35px;
-    display: inline-block;
-    opacity: 0;
-    animation: fadeIn 0.5s forwards;
+.upload-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .jobs-btn {
-    font-family: 'Protest Strike', sans-serif;
-    font-weight: 600;
-    padding: 5px 10px;
-    margin: 1px auto;
-    display: block;
-    background-color: #ffffffda;
-    color: #000;
-    border: 2.5px solid #938f0d;
-    border-radius: 900px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+  width: 100%;
+  padding: 0.85rem 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .jobs-btn:hover {
-    background-color: #333;
-    color: #ffffffc5;
-    border: 2.5px solid #068d89;
-    transform: scale(1.05);
+  background: #1cb5ab;
+  border-color: #1cb5ab;
+  transform: translateY(-2px);
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+.btn-back-cv {
+  width: 100%;
+  padding: 0.65rem 1.25rem;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-@keyframes slideDown {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+.btn-back-cv:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
-@keyframes fadeInUp {
-    from {
-        transform: translateY(30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+/* Progress & Messages */
+.cv-progress-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
 }
 
-@media (max-width: 768px) {
-    .cv-container {
-        width: 90%;
-        margin-top: 5%;
-    }
-
-    .heading-text {
-        font-size: 24px;
-    }
-
-    .msg2 {
-        font-size: 36px;
-    }
-
-    .jobs-btn {
-        width: 100%;
-    }
+.progress-bar-fill {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
-@media (max-width: 480px) {
-    .cv-container {
-        width: 95%;
-        padding: 10px;
-    }
+.progress-bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, #1cb5ab, #22d3ee);
+  transition: width 0.3s ease;
+}
 
-    .heading-text {
-        font-size: 20px;
-    }
+.msg1 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+}
 
-    .msg2 {
-        font-size: 30px;
-    }
+.alert-cv-success {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(16, 185, 129, 0.25);
+  border: 1.5px solid #34d399;
+  color: #ffffff;
+  border-radius: 12px;
+  font-weight: 600;
+  box-sizing: border-box;
+}
 
-    .jobs-btn {
-        width: 100%;
-    }
+.alert-cv-error {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(239, 68, 68, 0.25);
+  border: 1.5px solid #f87171;
+  color: #ffffff;
+  border-radius: 12px;
+  font-weight: 600;
+  box-sizing: border-box;
 }

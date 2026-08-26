@@ -1,99 +1,359 @@
-/* Container for the whole profile section */
-.profile_row {
-    display: flex;
-    flex-direction: row;
-    gap: 50px;
-    align-items: center;
-    justify-content: space-between;
+/* ProfileForm.css - Executive 2-Column Glassmorphic Candidate Dashboard */
+
+.profile-page-wrapper {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  background: linear-gradient(rgba(10, 15, 29, 0.82), rgba(10, 15, 29, 0.92)),
+              url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4.5rem 1.5rem 3rem 1.5rem;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
-.profile_body {
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
-    height: auto;
-    width: 950px;
-    padding: 20px;
-    background-color: #7450502d; /* white background */
-    border: 2px solid #6c1f99;
-    border-radius: 15px;
-    box-shadow: 0 6px 18px rgba(15, 161, 197, 0.998); /* subtle shadow */
-    font-family: 'Arial', sans-serif;
+/* Container */
+.profile-container {
+  position: relative;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+  padding: 2.75rem 2.25rem;
+  border-radius: 32px;
+  max-width: 1140px;
+  width: 100%;
+  color: #ffffff;
+  box-sizing: border-box;
 }
 
-
-/* Resume container */
-.profileForm-resume {
-    height: auto;
-    background-color: #7450502d; /* white background */
-    border: 2px solid #991f85;
-    border-radius: 15px;
-    box-shadow: 0 6px 18px rgba(15, 161, 197, 0.998); /* subtle shadow */
-    font-family: 'Arial', sans-serif;
+.btn-back-home {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  padding: 0.55rem 1.15rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  z-index: 10;
 }
 
-/* iframe styling */
-.profileForm-resume iframe {
-    border-radius: 10px;
-    border:2px solid #1edd91;
-    width: 100%;
-    height: 600px;
-    box-shadow: 0 4px 12px rgb(65, 220, 207);
+.btn-back-home:hover {
+  background: linear-gradient(135deg, #1cb5ab 0%, #0d9488 100%);
+  color: #ffffff;
+  border-color: #ffffff;
+  transform: translateY(-2px);
 }
 
-/* Message when no resume */
-.profileForm-resume p {
-    font-size: 18px;
-    text-align: center;
-    color: #777;
-    padding: 60px 0;
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.65rem;
+  margin-bottom: 2.25rem;
 }
 
-/* Button container */
-.profileForm-buttonContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 30px;
+.portal-badge {
+  display: inline-block;
+  background: rgba(28, 181, 171, 0.25);
+  border: 1.5px solid #1cb5ab;
+  color: #22d3ee;
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  font-size: 0.825rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
-/* Button styling */
-.profileForm-leftButton {
-    height: 25vh;
-    font-size: 20px;
-    font-weight: bold;
-    background-color: #000;
-    color: #fff;
-    border: 2px solid #fff;
-    border-radius: 100px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.portal-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.5px;
 }
 
-.profileForm-leftButton:hover {
-    border: 2.5px solid #101010;
-    background-color:#5b5151;
-    color: #f4f1f1;
-    transform: translateY(-2px);
+.portal-subtitle {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 680px;
+  margin: 0;
+  line-height: 1.6;
 }
 
-/* Responsive adjustments */
-@media screen and (max-width: 768px) {
-    .profile_body {
-        padding: 15px;
-    }
+/* 2-Column Side-by-Side Executive Dashboard Grid */
+.profile-content-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.75rem;
+  align-items: stretch;
+}
 
-    .profileForm-title {
-        font-size: 24px;
-    }
+@media (max-width: 920px) {
+  .profile-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
-    .profileForm-leftButton {
-        width: 100%;
-        text-align: center;
-        font-size: 16px;
-    }
+.profile-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 24px;
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
 
-    .profileForm-resume iframe {
-        height: 400px;
-    }
+.profile-card:hover {
+  transform: translateY(-4px);
+  border-color: #1cb5ab;
+  background: rgba(15, 23, 42, 0.75);
+  box-shadow: 0 14px 35px rgba(28, 181, 171, 0.25);
+}
+
+.card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-category-tag {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 1px;
+}
+
+.status-pill-green {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid #34d399;
+  color: #34d399;
+  padding: 0.25rem 0.75rem;
+  border-radius: 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
+}
+
+.status-pill-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 14px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.status-pill-badge.unlocked-badge {
+  background: rgba(34, 211, 238, 0.2);
+  border: 1px solid #22d3ee;
+  color: #22d3ee;
+}
+
+.status-pill-badge.locked-badge {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid #f87171;
+  color: #f87171;
+}
+
+.card-heading {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.card-description {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Resume Preview Box & Buttons */
+.resume-preview-box {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.doc-meta-info h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+  color: #ffffff;
+}
+
+.doc-meta-info p {
+  font-size: 0.825rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+.resume-button-grid {
+  display: flex;
+  gap: 0.85rem;
+}
+
+.btn-primary-cyan {
+  flex: 1;
+  background: linear-gradient(135deg, #1cb5ab 0%, #0d9488 100%);
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(28, 181, 171, 0.4);
+}
+
+.btn-primary-cyan:hover {
+  background: linear-gradient(135deg, #22d3ee 0%, #14b8a6 100%);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(34, 211, 238, 0.5);
+}
+
+.btn-glass-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-glass-secondary:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: #ffffff;
+}
+
+.full-width-action {
+  width: 100%;
+  margin-top: auto;
+}
+
+.full-width-action.disabled-btn {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+}
+
+/* Stats Row Box */
+.stats-row-box {
+  display: flex;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 0.85rem;
+}
+
+.stat-pill-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: center;
+}
+
+.stat-pill-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.stat-pill-val {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #22d3ee;
+}
+
+/* Uploader Box */
+.portal-uploader-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.portal-dropzone {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 18px;
+  padding: 2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.portal-dropzone:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #22d3ee;
+}
+
+.dropzone-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem 0;
+  color: #ffffff;
+}
+
+.dropzone-info {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
+
+.uploader-button-group {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Loading / Error States */
+.profile-loading-state, .profile-error-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: rgba(255, 255, 255, 0.8);
 }

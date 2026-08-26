@@ -1,157 +1,230 @@
-# from django.http import JsonResponse
-# from django.views.decorators.csrf import csrf_exempt
-from ..models import CustomUser, Company, Candidate, JobVacancies, CompanyTests, TestScores
-from ..ottp import generate_random_password, send_mail
-from rest_framework.decorators import api_view, parser_classes
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser # for upload files & to parse data from file 
-from django.contrib.auth.hashers import (make_password, check_password, )  # for hash password
-from supabase_client import supabase
-import uuid  # Universally Unique Identifier, generates a 128-bit unique value(string)
-from datetime import datetime
+from Backend.models import CustomUser, Company, Candidate, JobVacancies, CompanyTests, TestScores
+from Backend.config.supabase_client import supabase
+from Backend.utils.jwt_utils import decode_token, protected_route
 
-# --------------------- CANDIDATE ROUTES ---------------------
+# --------------------- CANDIDATE ROUTES (PROTECTED) ---------------------
 
-@api_view(['POST'])
+@api_view(["POST"])
+@permission_classes([AllowAny])
 def toggle_jobs(request):
-    """ function ta saved/remove jobs from saved jobs list """
-    if request.method != "POST":  # invalid http method
-        return Response({"error": "Invalid request method"}, status=400)
-    data_to_be_toggled = request.data
-    candidate_id = data_to_be_toggled.get("candidateId")
-    job_id = data_to_be_toggled.get("jobId")
-    try:
-        # Get the candidate instance
-        candidate =  Candidate.objects.get(user_id= candidate_id) # get candidate object
-        
-        # Use the field name 'save_jobs' defined in your Candidate model, then
-        # use id=job_id in filter to check if this specific job is already linked
-            
-        if data_to_be_toggled.get("state") == 'homepage':
-            if candidate.saved_job.filter(id=job_id).exists(): # REMOVE job from saved list
-                candidate.saved_jobs_by_candidates.remove(job_id)  
-                print("Job removed from saved list")
-                return Response({"success": True, "message": "Job removed from applied list",
-                             "user_id": candidate_id,}, status=200)
-            else:
-                return Response({"sucess": False, "message": 'this job does not exists in your list.'})
-            
-        else:
-            if candidate.saved_job.filter(id=job_id).exists(): # dont need to saved job again
-                print("Job already exists in list")
-                return Response({"success": True, "message": "Job already exists in list",
-                                "user_id": candidate_id,}, status=200)
-            else: # ADD/ SAVE job to saved list
-                candidate.saved_jobs_by_candidates.add(job_id)  
-                print("Job added to saved list")
-                return Response({"success": True, "message": "Job added to saved list",
-                                "user_id": candidate_id,}, status=200)   
+    """Function to save/remove jobs from candidate saved jobs list."""
+    if request.method != "POST":
+        return Response({"error": "Invalid request method"}, status=405)
 
-    except Candidate.DoesNotExist: 
+    user_id = None
+    auth_header = request.headers.get("Authorization") or request.META.get("HTTP_AUTHORIZATION")
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
+        payload = decode_token(token)
+        if payload and payload.get("token_type") == "access":
+            user_id = payload.get("user_id")
+
+    candidate_id = user_id or request.data.get("candidateId") or request.data.get("UserId") or request.session.get("user_id")
+    job_id = request.data.get("jobId")
+
+    if not candidate_id:
+        return Response({"success": False, "message": "Authentication required. Please log in as a job seeker."}, status=401)
+    if not job_id:
+        return Response({"success": False, "message": "Job ID is required."}, status=400)
+
+    try:
+        candidate = Candidate.objects.filter(user_id=candidate_id).first() or Candidate.objects.filter(id=candidate_id).first()
+        if not candidate:
+            return Response({"success": False, "message": "Candidate profile not found"}, status=404)
+
+        if candidate.save_jobs.filter(id=job_id).exists():
+            candidate.save_jobs.remove(job_id)
+            return Response({"success": True, "message": "Job removed from your saved list", "isSaved": False}, status=200)
+        else:
+            candidate.save_jobs.add(job_id)
+            return Response({"success": True, "message": "Job saved to your collection successfully", "isSaved": True}, status=200)
+    except Exception as e:
+        print("Toggle Jobs Error:", e)
+        return Response({"success": False, "message": f"Error saving job: {str(e)}"}, status=500)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+@protected_route(allowed_roles=["candidate"])
+def applied_to_jobs(request):
+    """Function to return jobs candidate applied to (Protected for Candidates)."""
+    if request.method != "POST":
+        return Response({"error": "Invalid request method"}, status=405)
+
+    candidate_id = getattr(request, "user_id", None) or request.data.get("candidateId")
+    try:
+        candidate = Candidate.objects.get(user_id=candidate_id)
+        applied_jobs = candidate.applied_jobs.all().values()
+        return Response({"success": True, "applied_jobs": list(applied_jobs)}, status=200)
+    except Candidate.DoesNotExist:
         return Response({"success": False, "message": "Candidate not found"}, status=404)
     except Exception as e:
-        print("toggle jobs", e)
+        print("Applied Jobs Error:", e)
         return Response({"success": False, "message": "Internal server error."}, status=500)
 
 
-@api_view(['POST'])
-def applied_to_jobs(request):
-    """ function save jobs applied by candidate in DB send from frontend """
-    if request.method != "POST":  # invalid http method
-        return Response({"error": "Invalid request method"}, status=400)
-    
-    candidate_appliedJobs = request.data
-    candidate_id = candidate_appliedJobs.get("candidateId")
-    job_id = candidate_appliedJobs.get("jobId")
-    try:
-        # candidate & job instances
-        candidate =  Candidate.objects.get(user_id= candidate_id) # get candidate object
-        job = JobVacancies.objects.get(id= job_id) # get job object
-        # check if candidate has applied to the job
-        if job.candidates_applied.filter(id=candidate.id).exists(): # candidate has applied
-            return Response({"success": True, "message": "Already applied to this job",
-                             "user_id": candidate_id,}, status=200)
-        else: # candidate has not applied
-            job.candidates_applied.add(candidate.id)  # add candidate to job's applied list
-            return Response({"success": True, "message": "Sucessfully applied to this job",
-                             "user_id": candidate_id,}, status=200)
-         
-    except (Candidate.DoesNotExist , JobVacancies.DoesNotExist): 
-        return Response({"success": False, "message": "Candidate -OR- Job not found"}, status=404)
-    except Exception as e:
-        print("applied to jobs", e)
-        return Response({"success": False, "message": "Internal server error."}, status=500)    
+# --------------------- COMPANY ROUTES (PROTECTED) ---------------------
 
-
-# --------------------- COMPANY ROUTES ---------------------
-
-@api_view(['POST'])
+@api_view(["POST"])
+@permission_classes([AllowAny])
 def add_vacancy(request):
-    """ function stores job vacancies in DB send from frontend """
-    if request.method != "POST":  # invalid http method
-        return Response({"error": "Invalid request method"}, status=400)
+    """Function stores job vacancies in DB for companies."""
+    if request.method != "POST":
+        return Response({"error": "Invalid request method"}, status=405)
 
-    jobVacancy_data = request.data
-    CompanyId = jobVacancy_data.get("companyId")
-    job_title = jobVacancy_data.get("title")
-    job_skillsRequired = jobVacancy_data.get("requiredSkills")
-    job_levelOfExperience = jobVacancy_data.get("levelOfExperience")
-    job_additionalRequirements = jobVacancy_data.get("additionalRequirements")
-    job_location = jobVacancy_data.get("location")
-    job_timing = jobVacancy_data.get("timing")
+    user_id = None
+    user_role = None
+
+    # Check JWT token from Authorization header if present
+    auth_header = request.headers.get("Authorization") or request.META.get("HTTP_AUTHORIZATION")
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
+        payload = decode_token(token)
+        if payload and payload.get("token_type") == "access":
+            user_id = payload.get("user_id")
+            user_role = payload.get("role")
+
+    job_data = request.data
+    company_id = user_id or job_data.get("companyId") or request.session.get("user_id")
+
+    if not company_id:
+        return Response(
+            {"success": False, "message": "Authentication required. Please log in as an employer."},
+            status=401,
+        )
 
     try:
-        company = Company.objects.get(user_id=CompanyId)
-        if company:
-            job = JobVacancies.objects.create(
-                company = company,
-                job_title=job_title,
-                skills_required=job_skillsRequired,
-                level_of_experience=job_levelOfExperience,
-                additional_requirements=job_additionalRequirements,
-                location=job_location,
-                timings=job_timing,
-            )
+        # Lookup company by user_id or primary key id
+        company = Company.objects.filter(user_id=company_id).first() or Company.objects.filter(id=company_id).first()
+        if not company:
+            return Response({"success": False, "message": "Company profile not found for this account."}, status=404)
 
-            print("Job vacancy added successfully")
-            return Response({"success": True, "message": "Job vacancy added successfully.",
-                            "job_id": job.id}, status=201)
-
-    except Company.DoesNotExist:
-        print("Company not found")
-        return Response({"success": False, "message": "Company not found"}, status=404)  
-
+        job = JobVacancies.objects.create(
+            company=company,
+            job_title=job_data.get("title"),
+            skills_required=job_data.get("requiredSkills"),
+            level_of_experience=job_data.get("levelOfExperience"),
+            additional_requirements=job_data.get("additionalRequirements"),
+            location=job_data.get("location"),
+            timings=job_data.get("timing"),
+        )
+        return Response(
+            {"success": True, "message": "Job vacancy added successfully.", "job_id": job.id},
+            status=201,
+        )
     except Exception as e:
-        print("add vacancay", e)
-        return Response({"success": False, "message": f"{str(e)}, no job vacancies list"}, status=500)      
-            
+        print("Add Vacancy Error:", e)
+        return Response({"success": False, "message": f"Error publishing vacancy: {str(e)}"}, status=500)
 
-@api_view(['POST'])
+
+# --------------------- PUBLIC / UNPROTECTED ROUTES ---------------------
+
+@api_view(["POST", "GET"])
+@permission_classes([AllowAny])
 def display_vacancies(request):
-    """ function fetches job vacancies from DB for frontend display """
-    if request.method != "POST":  # invalid http method
-        return Response({"error": "Invalid request method"}, status=400)
+    """Public Unprotected route: Fetches job vacancies for visitors/candidates."""
     try:
-        job_vacancies_list = JobVacancies.objects.all().values()# fetch all job vacancies
-        # job_vacancies_list = list(job_vacancies)  # convert QuerySet to list
+        job_vacancies_list = JobVacancies.objects.all().order_by("-created_at")
         job_data = {}
-        for jobs in job_vacancies_list:                                   
-            c_name = Company.objects.get(id= jobs["company_id"]).user.username # Company var user, user var username
-            job_data[jobs['id']] = {
-                "companyId": jobs['company_id'], # FK to Company table
-                "CompanyName": c_name, # Company name
-                "jobTitle": jobs['job_title'], # job title
-                "skillsRequired": jobs['skills_required'], # skills required
-                "levelOfExperience": jobs['level_of_experience'], # level of experience
-                "additionalRequirements": jobs['additional_requirements'], # additional requirements
-                "location": jobs['location'], # job location
-                "timings": jobs['timings'], # job timings
-                "posted at": jobs['created_at'].strftime("%b %d, %Y - %I:%M %p"), # Format: Dec 16, 2025 - 04:38 PM
-            }
-        # print(job_data)
-        return Response({"success": True, "message": 'vacancies data delievered' ,
-                     "jobs": job_data }, status=200)
+        for job in job_vacancies_list:
+            company_name = "Featured Employer"
+            try:
+                if job.company and job.company.user:
+                    company_name = job.company.user.username
+            except Exception:
+                pass
 
+            test_obj = CompanyTests.objects.filter(job=job).first()
+
+            job_data[str(job.id)] = {
+                "companyId": job.company_id,
+                "CompanyName": company_name,
+                "jobTitle": job.job_title,
+                "skillsRequired": job.skills_required,
+                "levelOfExperience": job.level_of_experience,
+                "additionalRequirements": job.additional_requirements or "",
+                "location": job.location,
+                "timings": job.timings,
+                "hasTest": bool(test_obj),
+                "testId": test_obj.id if test_obj else None,
+                "testTitle": test_obj.test_title if test_obj else None,
+                "testTimer": test_obj.test_timer if test_obj else 0,
+                "questionCount": len(test_obj.test_questions) if (test_obj and test_obj.test_questions) else 0,
+                "posted at": job.created_at.strftime("%b %d, %Y - %I:%M %p") if job.created_at else "",
+            }
+        return Response({"success": True, "message": "Vacancies data delivered", "jobs": job_data}, status=200)
     except Exception as e:
-        print("diaplay vacancies", e)
-        return Response({"success": False, "message": f"Internal server error."}, status=500)
+        print("Display Vacancies Error:", e)
+        return Response({"success": False, "message": f"Error fetching vacancies: {str(e)}"}, status=500)
+
+
+@api_view(["POST", "GET"])
+@permission_classes([AllowAny])
+def company_posted_vacancies(request):
+    """Returns all vacancies published by a specific company/employer."""
+    company_id = getattr(request, "user_id", None) or request.data.get("companyId") or request.data.get("UserId")
+    try:
+        company = Company.objects.filter(user_id=company_id).first() or Company.objects.filter(id=company_id).first()
+        if not company:
+            return Response({"success": True, "vacancies": []}, status=200)
+
+        vacancies_qs = JobVacancies.objects.filter(company=company).order_by("-created_at")
+        results = []
+        for v in vacancies_qs:
+            test_obj = CompanyTests.objects.filter(job=v).first()
+            applied_count = v.candidates_applied.count()
+            results.append({
+                "id": v.id,
+                "jobTitle": v.job_title,
+                "location": v.location,
+                "timings": v.timings,
+                "experience": v.level_of_experience,
+                "skills": v.skills_required,
+                "hasTest": bool(test_obj),
+                "testTitle": test_obj.test_title if test_obj else None,
+                "testTimer": test_obj.test_timer if test_obj else 0,
+                "appliedCount": applied_count,
+                "createdAt": v.created_at.strftime("%b %d, %Y - %I:%M %p") if v.created_at else "",
+            })
+        return Response({"success": True, "vacancies": results}, status=200)
+    except Exception as e:
+        print("Company Vacancies Error:", e)
+        return Response({"success": False, "message": str(e)}, status=500)
+
+
+@api_view(["POST", "GET"])
+@permission_classes([AllowAny])
+def candidate_saved_jobs(request):
+    """Returns all saved jobs for a candidate."""
+    candidate_id = getattr(request, "user_id", None) or request.data.get("candidateId") or request.data.get("UserId")
+    try:
+        candidate = Candidate.objects.filter(user_id=candidate_id).first() or Candidate.objects.filter(id=candidate_id).first()
+        if not candidate:
+            return Response({"success": True, "savedJobs": []}, status=200)
+
+        saved_qs = candidate.save_jobs.all().order_by("-created_at")
+        results = []
+        for job in saved_qs:
+            test_obj = CompanyTests.objects.filter(job=job).first()
+            company_name = job.company.user.username if (job.company and job.company.user) else "Enterprise Partner"
+            results.append({
+                "id": job.id,
+                "CompanyName": company_name,
+                "jobTitle": job.job_title,
+                "skillsRequired": job.skills_required,
+                "levelOfExperience": job.level_of_experience,
+                "location": job.location,
+                "timings": job.timings,
+                "hasTest": bool(test_obj),
+                "testId": test_obj.id if test_obj else None,
+                "testTitle": test_obj.test_title if test_obj else None,
+                "testTimer": test_obj.test_timer if test_obj else 0,
+                "questionCount": len(test_obj.test_questions) if (test_obj and test_obj.test_questions) else 0,
+            })
+        return Response({"success": True, "savedJobs": results}, status=200)
+    except Exception as e:
+        print("Candidate Saved Jobs Error:", e)
+        return Response({"success": False, "message": str(e)}, status=500)

@@ -1,27 +1,26 @@
 """
 URL configuration for JOBCODE project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
 from django.contrib import admin
-from django.urls import path, include # to transfer app control to main folder of project through include
-from . import views
+from django.urls import path, include
+from django.http import JsonResponse
+
+
+def api_root(request):
+    return JsonResponse(
+        {
+            "status": "online",
+            "message": "JobMate Backend API Server is running successfully!",
+            "frontend_url": "http://localhost:5173",
+            "available_endpoints": "/api/",
+        },
+        status=200,
+    )
+
 
 urlpatterns = [
+    path("", api_root, name="api_root"),
     path("admin/", admin.site.urls),
-    # path("path name after port no. 8000/", views.function from views file, name = optional)
-    # path("", views.home, name='home'),
-    path("api/", include('Backend.urls') ),
+    path("api/", include("Backend.urls")),
 ]

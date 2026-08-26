@@ -1,0 +1,70 @@
+[
+  {
+    "username": "TechVerse Solutions",
+    "email": "hr@techverse.com",
+    "password": "admin123456",
+    "role": "company",
+    "isHiringDeskMode": true,
+    "companyAddress": "Suite 402, Software Technology Park, Shahrah-e-Faisal, Karachi",
+    "contactNumber": "+92-300-9876543",
+    "companyWebsite": "https://techverse-solutions.com",
+    "sampleJobVacancies": [
+      {
+        "title": "Senior Full-Stack Developer",
+        "requiredSkills": "React, Python, Django, PostgreSQL, REST APIs",
+        "levelOfExperience": "3-5 years",
+        "additionalRequirements": "Strong problem-solving skills & Git experience",
+        "location": "Karachi / Hybrid",
+        "timing": "09:00 AM - 05:00 PM"
+      },
+      {
+        "title": "UI/UX Designer",
+        "requiredSkills": "Figma, Adobe XD, CSS3, Wireframing, Prototyping",
+        "levelOfExperience": "2+ years",
+        "additionalRequirements": "Portfolio of modern web apps",
+        "location": "Remote",
+        "timing": "Flexible Hours"
+      }
+    ]
+  },
+  {
+    "username": "Systems Limited",
+    "email": "careers@systemsltd.com",
+    "password": "admin123456",
+    "role": "company",
+    "isHiringDeskMode": true,
+    "companyAddress": "Systems Campus, E-11/3, Islamabad",
+    "contactNumber": "+92-51-111797836",
+    "companyWebsite": "https://systemsltd.com",
+    "sampleJobVacancies": [
+      {
+        "title": "Backend Python Engineer",
+        "requiredSkills": "Python, Django REST Framework, PostgreSQL, Redis, Docker",
+        "levelOfExperience": "2-4 years",
+        "additionalRequirements": "Microservices architecture knowledge",
+        "location": "Islamabad / On-site",
+        "timing": "09:00 AM - 06:00 PM"
+      }
+    ]
+  },
+  {
+    "username": "10Pointers Inc",
+    "email": "contact@10pointers.io",
+    "password": "admin123456",
+    "role": "company",
+    "isHiringDeskMode": true,
+    "companyAddress": "Building 12, I.I. Chundrigar Road, Karachi",
+    "contactNumber": "+92-321-4567890",
+    "companyWebsite": "https://10pointers.io",
+    "sampleJobVacancies": [
+      {
+        "title": "Junior Frontend Developer",
+        "requiredSkills": "React.js, JavaScript (ES6+), HTML5, CSS3",
+        "levelOfExperience": "1-2 years",
+        "additionalRequirements": "Fresh graduates welcome",
+        "location": "Karachi",
+        "timing": "10:00 AM - 06:00 PM"
+      }
+    ]
+  }
+]

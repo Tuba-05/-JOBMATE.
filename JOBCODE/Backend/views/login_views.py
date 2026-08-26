@@ -1,42 +1,94 @@
-# from django.http import JsonResponse
-# from django.views.decorators.csrf import csrf_exempt
-from ..models import CustomUser, Company, Candidate, JobVacancies, CompanyTests, TestScores
-from ..ottp import generate_random_password, send_mail
-from rest_framework.decorators import api_view, parser_classes
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser # for upload files & to parse data from file 
-from django.contrib.auth.hashers import (make_password, check_password, )  # for hash password
-from supabase_client import supabase
-import uuid  # Universally Unique Identifier, generates a 128-bit unique value(string)
-from datetime import datetime
+from django.contrib.auth.hashers import check_password
+from Backend.models import CustomUser, Candidate, Company
+from Backend.config.supabase_client import supabase
+from Backend.utils.jwt_utils import generate_jwt_tokens
+
 
 @api_view(["POST"])
 def login(request):
-    """ function takes user inputs for logged in """
-    if request.method != "POST":  # invalid http method
-        return Response({"error": "Invalid request method"}, status=400)
-    loginedUser_data = request.data
-    email = loginedUser_data.get("email")
-    password = loginedUser_data.get("password")
-    try:
-        user = CustomUser.objects.get(email=email)
-        if not check_password(password, user.password):  # if password not matches with DB passowrd
-            print("invalid password")
-            return Response({"success": False, "message": "Invalid password"}, status=401)
+    """
+    Authenticates user, initializes Django session, and returns JWT Access & Refresh tokens
+    along with full profile payload.
+    """
+    if request.method != "POST":
+        return Response({"error": "Invalid request method"}, status=405)
 
-        if user.role == "candidate":  # candidate log in
-            print("Candidate logged in")
-            return Response({"success": True, "message": "Candidate logged in", "role": "candidate",
-                        "user_id": user.id,},status=201)
-            
-        else:  # company logged in
-            print("Company logged in")
-            return Response({"success": True, "message": "Company logged in", "role": "company",
-                        "user_id": user.id,},status=201)
-        
-    except CustomUser.DoesNotExist:
-        return Response({"error": "User not found"}, status=404)    
-    
+    try:
+        login_data = request.data
+        email = login_data.get("email", "").strip().lower()
+        password = login_data.get("password", "").strip()
+
+        if not email or not password:
+            return Response(
+                {"success": False, "message": "Email and password are required."},
+                status=400,
+            )
+
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {"success": False, "message": "User not found with this email."},
+                status=404,
+            )
+
+        if not check_password(password, user.password):
+            return Response(
+                {"success": False, "message": "Invalid password."},
+                status=401,
+            )
+
+        # Set User Session & Generate JWT Tokens
+        request.session["user_id"] = user.id
+        request.session["username"] = user.username
+        request.session["email"] = user.email
+        request.session["role"] = user.role
+        request.session.modified = True
+
+        tokens = generate_jwt_tokens(user)
+
+        profile_data = {}
+        if user.role == "candidate":
+            candidate = Candidate.objects.filter(user=user).first()
+            if candidate:
+                profile_data = {
+                    "profession": candidate.profession,
+                    "experience": candidate.experience,
+                    "skills": candidate.skills,
+                    "resume_link": candidate.resume_link,
+                }
+        elif user.role == "company":
+            company = Company.objects.filter(user=user).first()
+            if company:
+                profile_data = {
+                    "address": company.address,
+                    "contact": company.contact,
+                    "website": company.website,
+                }
+
+        return Response(
+            {
+                "success": True,
+                "message": f"Successfully logged in as {user.role}.",
+                "user_id": user.id,
+                "role": user.role,
+                "tokens": tokens,
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "role": user.role,
+                    "profile": profile_data,
+                },
+            },
+            status=200,
+        )
+
     except Exception as e:
-        print("login", e)
-        return Response({"success": False, "message": f"Internal server error"}, status=500)
+        print("Login Error:", e)
+        return Response(
+            {"success": False, "message": "Internal server error."},
+            status=500,
+        )

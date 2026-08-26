@@ -32,20 +32,27 @@ const VacancyForm = () => {
     // submitting vacancy data to backend
     if (showbutton) {
       setshowbutton(false);
-      setAddAnotherVacancy(true);
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/add-job-vacancy/",{
+        const token = localStorage.getItem("accessToken") || localStorage.getItem("access_token");
+        const headers = { "Content-Type": "application/json" };
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+        const response = await fetch("http://127.0.0.1:8000/api/add-job-vacancy/", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: headers,
           body: JSON.stringify(dataToSend),
         }); 
         const vacancyResponse = await response.json();
-        if (vacancyResponse. success){
+        if (response.ok && vacancyResponse.success){
           localStorage.setItem("JobId", vacancyResponse.job_id); // Store JobId for later use
-          alert("Vacancy submitted successfully!");
+          alert("✅ Job Vacancy published successfully!");
         }
         else{
-          alert("Error from backend.");
+          alert("⚠️ " + (vacancyResponse.message || "Error publishing vacancy. Please try again."));
+          if (response.status === 401) {
+            navigate("/login-signup");
+          }
         }    
       } catch (error) {
         console.error("Error submitting vacancy:", error);

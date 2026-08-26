@@ -1,12 +1,11 @@
 # from django.http import JsonResponse
 # from django.views.decorators.csrf import csrf_exempt
 from ..models import CustomUser, Company, Candidate, JobVacancies, CompanyTests, TestScores
-from ..ottp import generate_random_password, send_mail
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser # for upload files & to parse data from file 
 from django.contrib.auth.hashers import (make_password, check_password, )  # for hash password
-from supabase_client import supabase
+from Backend.config.supabase_client import supabase
 import uuid  # Universally Unique Identifier, generates a 128-bit unique value(string)
 from datetime import datetime
 

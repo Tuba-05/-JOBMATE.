@@ -1,166 +1,211 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import "./Cv.css";
 
 function Cv() {
-    const navigate = useNavigate();
-    const [file, setFile] = useState(null);
-    const [progress, setProgress] = useState({ started: false, pc: 0 });
-    const [msg1, setMsg1] = useState(null);
-    const [msg2, setMsg2] = useState([]);
-    const [icon, setIcon] = useState(null);
-    const [showButton, setShowButton] = useState(false);
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
-    const sentence = "Jobs now just a click away -->";
+  const [file, setFile] = useState(null);
+  const [progress, setProgress] = useState({ started: false, pc: 0 });
+  const [msg, setMsg] = useState({ type: "", text: "" });
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [showNextBtn, setShowNextBtn] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    function HandleUpload() {
-        if (!file) {
-        //if no files selected
-        setMsg2([]);
-        setMsg1("No files selected");
-        setIcon(
-            <i
-            className="bi bi-exclamation-lg warning-icon"
-            style={{ color: "yellow" }}
-            ></i>
-        );
-        setShowButton(false); // Hide button if no file is selected
-        return;
-        }
-        //allowed file types
-        const allowedTypes = [
-        "application/pdf", // PDF
-        "application/msword", // DOC
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
-        // "application/vnd.oasis.opendocument.text", // ODT
-        "text/html",  // HTML
-        "application/xhtml+xml", // XHTML
-        ];
+  // File Drag & Drop Handlers
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
 
-        if (!allowedTypes.includes(file.type)) {
-        // if file type invalid
-        alert("Invalid file type! Please upload PDF, DOC, DOCX or ODT.");
-        return;
-        }
-        // if file type valid
-        const fd = new FormData(); // Creates a container to store form & file data, worked with fetch() & axios
-        console.log("File type valid:", file.type);
-        setIcon(null);
-        setMsg2([]);
-        setMsg1("Uploading...");
-        setProgress((prevState) => ({ ...prevState, started: true, pc: 0 }));
-        setShowButton(false);
-        fd.append("UserId", localStorage.getItem("UserId")); // user id
-        fd.append("resume", file); // file
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
 
-        axios.post("http://127.0.0.1:8000/api/upload-resume/", fd, {
-        onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setProgress((prevState) => ({ ...prevState, pc: percentCompleted }));
-        },
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        })
-        .then((res) => {
-            if (res.data.success) {
-                const uploadedFileUrl = res.data.resume_url; // user's resume link
-                localStorage.setItem("UserId", res.data.user_id); // Save User ID for later usage
-                console.log(res.data.message);
-                setMsg1("Upload Successful");
-                setIcon(
-                    <i className="bi bi-check success-icon"
-                        style={{ color: "green" }}
-                    ></i>
-                );
-                localStorage.setItem("resume_url", uploadedFileUrl); // saving in localStorage for later
-                setProgress((prevState) => ({ ...prevState, started: false, pc: 0 }));
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      validateAndSetFile(e.dataTransfer.files[0]);
+    }
+  };
 
-                // animation/message logic
-                setTimeout(() => {
-                    setMsg1(null);
-                    const letters = sentence.split("");
-                    setMsg2(letters);
-                    setTimeout(() => setShowButton(true), 2000);
-                }, 3000);
-            } else {
-                alert(res.data.message || "Upload failed");
-            }
-        })
-        .catch((err) => {
-            setMsg1("Upload failed");
-            setIcon(
-                <i  className="bi bi-x error-icon" style={{ color: "red" }}></i>
-            );
-            setProgress((prevState) => ({ ...prevState, started: false, pc: 0 }));
-            console.error(err);
-        });
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      validateAndSetFile(e.target.files[0]);
+    }
+  };
+
+  const validateAndSetFile = (selectedFile) => {
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/html",
+    ];
+
+    if (!allowedTypes.includes(selectedFile.type)) {
+      setMsg({ type: "error", text: "Invalid file type. Please upload a PDF, DOC, or DOCX file." });
+      return;
     }
 
-    const resumeupload = () => {
-        navigate("/Pf"); // Pass "jobseeker" mode
+    setFile(selectedFile);
+    setMsg({ type: "", text: "" });
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      setMsg({ type: "error", text: "Please select a resume file first." });
+      return;
+    }
+
+    const userId = localStorage.getItem("UserId") || localStorage.getItem("user_id") || "1";
+    const token = localStorage.getItem("accessToken") || localStorage.getItem("access_token");
+
+    const fd = new FormData();
+    fd.append("UserId", userId);
+    fd.append("resume", file);
+
+    setLoading(true);
+    setMsg({ type: "info", text: "Uploading resume..." });
+    setProgress({ started: true, pc: 0 });
+
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        setProgress({ started: true, pc: percentCompleted });
+      },
     };
 
-return (
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/api/upload-resume/", fd, config);
+      if (res.data.success) {
+        setMsg({ type: "success", text: res.data.message || "Resume uploaded successfully!" });
+        if (res.data.resume_link) {
+          localStorage.setItem("resume_url", res.data.resume_link);
+        }
+        setShowNextBtn(true);
+      } else {
+        setMsg({ type: "error", text: res.data.message || "Upload failed. Please try again." });
+      }
+    } catch (err) {
+      console.error("Upload Resume Error:", err);
+      const errMsg = err.response?.data?.message || "Upload failed. Please check your connection.";
+      setMsg({ type: "error", text: errMsg });
+    } finally {
+      setLoading(false);
+      setProgress({ started: false, pc: 0 });
+    }
+  };
+
+  return (
     <div className="cv-body">
       <div className="cv-container">
+        {/* Heading */}
         <div className="cv-heading">
-          <h1 className="heading-text">Upload your Resume / CV</h1>
+          <h1 className="heading-text">Upload Resume / CV</h1>
+          <p className="heading-subtext">Supported formats: PDF, DOC, DOCX (Max 10MB)</p>
         </div>
 
-        <div className="cv-input-section">
-          <input
-            onChange={(e) => setFile(e.target.files[0])}
-            type="file"
-            accept=".pdf,.doc,.docx"
-            className="file-input"
-          />
-          <button onClick={HandleUpload} className="upload-btn">
-            Upload
-          </button>
-        </div>
+        {/* Status Alerts */}
+        {msg.text && (
+          <div className={msg.type === "success" ? "alert-cv-success" : "alert-cv-error"}>
+            {msg.text}
+          </div>
+        )}
 
-        <div className="cv-progress-section">
-          {progress.started && (
-            <progress
-              max="100"
-              value={progress.pc}
-              className="progress-bar"
-            ></progress>
-          )}
-          {msg1 && (
-            <span className="msg1">
-              {msg1} {icon}
-            </span>
-          )}
-        </div>
+        {/* Drag & Drop Zone */}
+        {!file ? (
+          <div
+            className={`cv-dropzone ${isDragOver ? "active" : ""}`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current && fileInputRef.current.click()}
+          >
+            <div className="upload-icon-wrapper">☁️</div>
+            <p className="dropzone-title">
+              Drag & Drop your CV here, or <span>Browse</span>
+            </p>
+            <p className="dropzone-info">PDF, DOCX or DOC files supported</p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleFileChange}
+              className="hidden-file-input"
+            />
+          </div>
+        ) : (
+          /* Selected File Badge */
+          <div className="selected-file-badge">
+            <span className="file-name-text">📄 {file.name}</span>
+            <button
+              type="button"
+              className="remove-file-btn"
+              onClick={() => setFile(null)}
+              disabled={loading}
+              title="Remove file"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
-        <div className="cv-message-section">
-          {msg2.length > 0 && (
-            <span className="msg2">
-              {msg2.map((letter, index) => (
-                <span
-                  key={index}
-                  className="animated-letter"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {letter === " " ? "\u00A0" : letter}
-                </span>
-              ))}
-            </span>
-          )}
-          {showButton && (
-            <button className="jobs-btn" onClick={resumeupload}>
-              See Your Resume First!
+        {/* Progress Bar */}
+        {progress.started && (
+          <div className="cv-progress-section">
+            <div className="progress-bar-fill">
+              <div
+                className="progress-bar-inner"
+                style={{ width: `${progress.pc}%` }}
+              ></div>
+            </div>
+            <span className="msg1">Uploading {progress.pc}%</span>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="cv-actions">
+          {file && !showNextBtn && (
+            <button
+              onClick={handleUpload}
+              className="upload-btn"
+              disabled={loading}
+            >
+              {loading ? "Uploading..." : "Upload Resume"}
             </button>
           )}
+
+          {showNextBtn && (
+            <button className="jobs-btn" onClick={() => navigate("/Pf")}>
+              See Your Profile & Resume →
+            </button>
+          )}
+
+          <button
+            type="button"
+            className="btn-back-cv"
+            onClick={() => navigate(-1)}
+          >
+            ← Back
+          </button>
         </div>
       </div>
     </div>
-);
+  );
 }
 
 export default Cv;

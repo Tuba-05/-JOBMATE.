@@ -1,123 +1,129 @@
-/* Form Container */
+/* AddVacancyForm.css - Minimal + Modern + Professional Form Design */
+
 .form-container {
-  padding: 2rem; /* Increased padding for better layout */
-  margin: 2rem auto 2rem; /* Increased margin */
-  border-radius: 12px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.15),
-    rgba(0, 0, 0, 0.2)
-  ); /* Subtle gradient for depth */
-  backdrop-filter: blur(6px); /* Slightly increased blur for a cleaner look */
-  box-shadow: 0px 4px 20px rgba(5, 112, 97, 0.4); /* Enhanced shadow for depth */
+  padding: 2.25rem 2rem;
+  margin: 1rem auto;
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0px 12px 35px rgba(0, 0, 0, 0.5);
   width: 100%;
-  max-width: 800px;
-  border: 1px solid rgba(255, 255, 255, 0.25); /* Subtle border */
-  animation: fadeIn 1s ease-in;
-  /* position: absolute; */
+  max-width: 820px;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  animation: fadeIn 0.4s ease-in-out;
+  box-sizing: border-box;
 }
 
-.form-container:hover {
-  backdrop-filter: blur(8px);
-  box-shadow: 0px 8px 25px rgba(255, 255, 255, 0.3);
-}
-
-/* Input Fields */
-.vacancy-form {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem; /* Increased spacing between fields */
-  width: 100%;
-}
-
-.form-input,
-.form-textarea,
-.form-select {
-  width: 100%;
-  padding: 0.9rem; /* Slightly larger padding for better usability */
-  font-size: 1rem;
-  color: snow;
-  background: rgba(0, 0, 0, 0.55); /* Increased transparency */
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  outline: none;
-  transition: box-shadow 0.3s ease, background 0.3s ease;
-}
-
-.form-input:focus,
-.form-textarea:focus {
-  box-shadow: 0px 0px 6px 2px rgba(255, 255, 255, 0.8); /* Stronger focus effect */
-  background: rgba(0, 0, 0, 0.65);
-}
-
-/* Title */
 .form-title {
-  font-size: 1.8rem;
-  font-weight: 900;
-  margin-bottom: 1.5rem; /* More space below the title */
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 1.75rem;
   color: #ffffff;
   text-align: center;
-  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
-  
+  letter-spacing: -0.3px;
 }
 
-/* Vacancy Form */
+/* Vacancy Form Layout */
 .vacancy-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   width: 100%;
 }
 
 /* Labels */
 .form-label {
-  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.925rem;
   color: #ffffff;
   font-weight: 700;
+  letter-spacing: 0.3px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+.floating-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+/* Input, Textarea & Select Fields */
 .form-input,
 .form-textarea,
 .form-select {
   width: 100%;
-  padding: 0.8rem;
-  font-size: 1rem;
-  color: snow;
-  background: rgba(0, 0, 0, 0.6); /* Darker background for better readability */
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
+  padding: 0.85rem 1.15rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a !important;
+  background: #ffffff !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
   outline: none;
-  transition: box-shadow 0.3s ease, background 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
 }
 
 .form-input:focus,
-.form-textarea:focus {
-  box-shadow: 0px 0px 8px 2px rgba(255, 255, 255, 0.8); /* Stronger focus effect */
-  background: rgba(0, 0, 0, 0.7);
+.form-textarea:focus,
+.form-select:focus {
+  border-color: #1cb5ab !important;
+  box-shadow: 0 0 0 3px rgba(28, 181, 171, 0.35) !important;
+  background: #ffffff !important;
+}
+
+.form-textarea {
+  min-height: 90px;
+  resize: vertical;
 }
 
 /* Placeholder Text */
 .form-input::placeholder,
 .form-textarea::placeholder {
-  color: rgba(240, 240, 240, 0.7);
+  color: #64748b;
+  font-weight: 400;
 }
 
-
-/* Submit Button */
-.submit-btn {
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
+/* Select Option Styling */
+.form-select option {
+  color: #0f172a;
+  background: #ffffff;
   font-weight: 600;
+}
+
+/* Submit & Secondary Buttons */
+.submit-btn {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 800;
   color: #ffffff;
-  background: linear-gradient(135deg, #6c757d, #4f4f4f);
-  border: none;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #1cb5ab 0%, #0d9488 100%);
+  border: 1.5px solid #ffffff;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Better visibility */
+  box-shadow: 0 4px 15px rgba(28, 181, 171, 0.4);
+  letter-spacing: 0.5px;
+  margin-top: 0.5rem;
 }
 
 .submit-btn:hover {
-  background: linear-gradient(135deg, #5c5c5c, #3e3e3e);
-  box-shadow: 0px 6px 15px rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, #22d3ee 0%, #14b8a6 100%);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(34, 211, 238, 0.5);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

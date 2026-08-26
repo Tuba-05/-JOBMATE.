@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import VacancyForm from "./AddVacancyForm";
 import './CompanyDashboard.css';
@@ -11,69 +11,18 @@ const CompanyDashboard = () => {
 
   const [scoreboardData, setScoreboardData] = useState([]);
   const [loadingScoreboard, setLoadingScoreboard] = useState(false);
+  const [fetchedScoreboard, setFetchedScoreboard] = useState(false);
 
   const [vacanciesData, setVacanciesData] = useState([]);
   const [loadingVacancies, setLoadingVacancies] = useState(false);
+  const [fetchedVacancies, setFetchedVacancies] = useState(false);
 
-  const handleAddVacancyClick = () => {
-    setShowScoreboard(false);
-    setShowVacancies(false);
-    setShowForm(!showForm);
-  };
-
-  // Fetch Company Scoreboard
-  const handleScoreboardClick = async () => {
-    if (showScoreboard) {
-      setShowScoreboard(false);
-      return;
-    }
-
-    setShowForm(false);
-    setShowVacancies(false);
-    setShowScoreboard(true);
-    setLoadingScoreboard(true);
-
+  // Background Pre-fetch Vacancies
+  const fetchVacanciesData = async (silent = false) => {
     const token = localStorage.getItem("accessToken") || localStorage.getItem("access_token");
     const userId = localStorage.getItem("UserId") || localStorage.getItem("user_id");
 
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/company-scoreboard/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: JSON.stringify({ companyId: userId }),
-      });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setScoreboardData(data.scores || []);
-      } else {
-        setScoreboardData([]);
-      }
-    } catch (err) {
-      console.error("Fetch Scoreboard Error:", err);
-      setScoreboardData([]);
-    } finally {
-      setLoadingScoreboard(false);
-    }
-  };
-
-  // Fetch Company Posted Vacancies
-  const handleViewVacanciesClick = async () => {
-    if (showVacancies) {
-      setShowVacancies(false);
-      return;
-    }
-
-    setShowForm(false);
-    setShowScoreboard(false);
-    setShowVacancies(true);
-    setLoadingVacancies(true);
-
-    const token = localStorage.getItem("accessToken") || localStorage.getItem("access_token");
-    const userId = localStorage.getItem("UserId") || localStorage.getItem("user_id");
-
+    if (!silent) setLoadingVacancies(true);
     try {
       const response = await fetch("http://127.0.0.1:8000/api/company-posted-vacancies/", {
         method: "POST",
@@ -86,14 +35,87 @@ const CompanyDashboard = () => {
       const data = await response.json();
       if (response.ok && data.success) {
         setVacanciesData(data.vacancies || []);
-      } else {
-        setVacanciesData([]);
+        setFetchedVacancies(true);
       }
     } catch (err) {
       console.error("Fetch Vacancies Error:", err);
-      setVacanciesData([]);
     } finally {
-      setLoadingVacancies(false);
+      if (!silent) setLoadingVacancies(false);
+    }
+  };
+
+  // Background Pre-fetch Scoreboard
+  const fetchScoreboardData = async (silent = false) => {
+    const token = localStorage.getItem("accessToken") || localStorage.getItem("access_token");
+    const userId = localStorage.getItem("UserId") || localStorage.getItem("user_id");
+
+    if (!silent) setLoadingScoreboard(true);
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/company-scoreboard/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify({ companyId: userId }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setScoreboardData(data.scores || []);
+        setFetchedScoreboard(true);
+      }
+    } catch (err) {
+      console.error("Fetch Scoreboard Error:", err);
+    } finally {
+      if (!silent) setLoadingScoreboard(false);
+    }
+  };
+
+  useEffect(() => {
+    // Silently pre-fetch on mount for instant zero-latency clicks
+    fetchVacanciesData(true);
+    fetchScoreboardData(true);
+  }, []);
+
+  const handleAddVacancyClick = () => {
+    setShowScoreboard(false);
+    setShowVacancies(false);
+    setShowForm(!showForm);
+  };
+
+  // Instant 0ms Toggle for Scoreboard Button
+  const handleScoreboardClick = () => {
+    if (showScoreboard) {
+      setShowScoreboard(false);
+      return;
+    }
+
+    setShowForm(false);
+    setShowVacancies(false);
+    setShowScoreboard(true);
+
+    if (!fetchedScoreboard) {
+      fetchScoreboardData(false);
+    } else {
+      fetchScoreboardData(true); // silent background update
+    }
+  };
+
+  // Instant 0ms Toggle for Vacancies Button
+  const handleViewVacanciesClick = () => {
+    if (showVacancies) {
+      setShowVacancies(false);
+      return;
+    }
+
+    setShowForm(false);
+    setShowScoreboard(false);
+    setShowVacancies(true);
+
+    if (!fetchedVacancies) {
+      fetchVacanciesData(false);
+    } else {
+      fetchVacanciesData(true); // silent background update
     }
   };
 

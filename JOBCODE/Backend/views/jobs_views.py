@@ -202,7 +202,8 @@ def company_posted_vacancies(request):
 
         results = []
         for v in vacancies_qs:
-            test_obj = v.companytests_set.first()
+            tests = list(v.companytests_set.all())
+            test_obj = tests[0] if tests else None
             results.append({
                 "id": v.id,
                 "jobTitle": v.job_title,

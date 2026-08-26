@@ -482,6 +482,70 @@
   cursor: pointer;
 }
 
+/* Job Details Modal & View Details Buttons */
+.btn-view-details, .btn-vault-details {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.825rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.btn-view-details:hover, .btn-vault-details:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: #22d3ee;
+  color: #22d3ee;
+}
+
+.details-modal-card {
+  max-width: 640px !important;
+}
+
+.details-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.details-meta-row .meta-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.3rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.825rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.details-section-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 1.15rem;
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.details-section-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #22d3ee;
+  margin-bottom: 0.6rem;
+}
+
+.details-text-content {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.6;
+  margin: 0;
+}
+
 /* Saved Vault Executive Horizontal List Layout */
 .saved-vault-list {
   display: flex;

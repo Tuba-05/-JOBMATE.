@@ -121,7 +121,7 @@ DATABASES = {
         'CONN_MAX_AGE': 600,
         'CONN_HEALTH_CHECKS': True,
         'OPTIONS': {
-            'connect_timeout': 5,
+            'connect_timeout': 15,
             'keepalives': 1,
             'keepalives_idle': 30,
             'keepalives_interval': 10,

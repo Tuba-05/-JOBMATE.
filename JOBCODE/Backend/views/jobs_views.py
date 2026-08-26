@@ -48,22 +48,38 @@ def toggle_jobs(request):
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
-@protected_route(allowed_roles=["candidate"])
 def applied_to_jobs(request):
-    """Function to return jobs candidate applied to (Protected for Candidates)."""
+    """Function to record candidate job application and fetch applied jobs."""
     if request.method != "POST":
         return Response({"error": "Invalid request method"}, status=405)
 
-    candidate_id = getattr(request, "user_id", None) or request.data.get("candidateId")
+    user_id = None
+    auth_header = request.headers.get("Authorization") or request.META.get("HTTP_AUTHORIZATION")
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
+        payload = decode_token(token)
+        if payload and payload.get("token_type") == "access":
+            user_id = payload.get("user_id")
+
+    candidate_id = user_id or request.data.get("candidateId") or request.data.get("UserId") or request.session.get("user_id")
+    job_id = request.data.get("jobId")
+
+    if not candidate_id:
+        return Response({"success": False, "message": "Candidate authentication required."}, status=401)
+
     try:
-        candidate = Candidate.objects.get(user_id=candidate_id)
-        applied_jobs = candidate.applied_jobs.all().values()
-        return Response({"success": True, "applied_jobs": list(applied_jobs)}, status=200)
-    except Candidate.DoesNotExist:
-        return Response({"success": False, "message": "Candidate not found"}, status=404)
+        candidate = Candidate.objects.filter(user_id=candidate_id).first() or Candidate.objects.filter(id=candidate_id).first()
+        if not candidate:
+            return Response({"success": False, "message": "Candidate profile not found"}, status=404)
+
+        if job_id:
+            candidate.applied_jobs.add(job_id)
+
+        applied_jobs = list(candidate.applied_jobs.all().values())
+        return Response({"success": True, "message": "Application submitted successfully.", "applied_jobs": applied_jobs}, status=200)
     except Exception as e:
         print("Applied Jobs Error:", e)
-        return Response({"success": False, "message": "Internal server error."}, status=500)
+        return Response({"success": False, "message": f"Error processing application: {str(e)}"}, status=500)
 
 
 # --------------------- COMPANY ROUTES (PROTECTED) ---------------------

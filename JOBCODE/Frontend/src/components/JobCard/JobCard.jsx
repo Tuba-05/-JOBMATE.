@@ -44,12 +44,35 @@ const JobCard = () => {
     }
   };
 
+  // Fetch Applied Jobs IDs from DB
+  const fetchAppliedJobIds = async () => {
+    if (!UserID) return;
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/applied-to-jobs/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify({ candidateId: UserID }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        const ids = (data.applied_jobs || []).map((j) => String(j.id));
+        setAppliedJobs(ids);
+      }
+    } catch (err) {
+      console.error("Fetch Applied Job IDs Error:", err);
+    }
+  };
+
   // Fetch Live Vacancies from Database
   const fetchJobs = async () => {
     try {
       setLoading(true);
       setError(null);
       await fetchSavedJobIds();
+      await fetchAppliedJobIds();
 
       const response = await fetch("http://127.0.0.1:8000/api/jobs-display/", {
         method: "POST",
@@ -128,15 +151,15 @@ const JobCard = () => {
     }
   };
 
-  // Launch Readiness Modal
+  // Launch Readiness Modal on Apply Click
   const handleApplyClick = (job) => {
     setSelectedJob(job);
     setShowReadinessModal(true);
   };
 
-  // Standard Application Submission
+  // Standard Application Submission (Saves application to employer DB)
   const confirmDirectApplication = async () => {
-    if (!selectedJob) return;
+    if (!selectedJob || !UserID) return;
 
     try {
       const response = await fetch("http://127.0.0.1:8000/api/applied-to-jobs/", {
@@ -148,7 +171,6 @@ const JobCard = () => {
         body: JSON.stringify({
           candidateId: UserID,
           jobId: selectedJob.id,
-          state: "applied",
         }),
       });
 
@@ -161,6 +183,7 @@ const JobCard = () => {
       }
     } catch (err) {
       console.error("Application failed:", err);
+      setShowReadinessModal(false);
     }
   };
 
@@ -287,7 +310,7 @@ const JobCard = () => {
                     <span className="meta-tag">Exp: {job.levelOfExperience || "Entry Level"}</span>
                     {job.hasTest && (
                       <span className="meta-tag test-badge-pill">
-                        Test: {job.questionCount} Questions ({job.testTimer}m)
+                        Test Required ({job.questionCount || 5} Qs, {job.testTimer || 5}m)
                       </span>
                     )}
                   </div>
@@ -319,11 +342,7 @@ const JobCard = () => {
                       onClick={() => handleApplyClick(job)}
                       disabled={isApplied}
                     >
-                      {isApplied
-                        ? "Applied"
-                        : job.hasTest
-                        ? "Take Screening Test"
-                        : "Apply Now"}
+                      {isApplied ? "Applied" : "Apply Now"}
                     </button>
 
                     <button
@@ -360,21 +379,21 @@ const JobCard = () => {
             {selectedJob.hasTest ? (
               <div className="test-instructions-box">
                 <div className="test-detail-pills">
-                  <span>Duration: <strong>{selectedJob.testTimer} Minutes</strong></span>
-                  <span>Questions: <strong>{selectedJob.questionCount} Questions</strong></span>
+                  <span>Duration: <strong>{selectedJob.testTimer || 5} Minutes</strong></span>
+                  <span>Questions: <strong>{selectedJob.questionCount || 5} Questions</strong></span>
                 </div>
                 <div className="rules-list">
-                  <p><strong>Assessment Rules:</strong></p>
+                  <p><strong>Screening Assessment Notice:</strong></p>
                   <ul>
-                    <li>The countdown timer starts immediately once you click "I am Ready".</li>
-                    <li>Questions include MCQs, True/False, and Short Text answers.</li>
-                    <li>Your final score will be automatically transmitted to the employer's Hiring Scoreboard.</li>
+                    <li>This position requires a technical screening assessment.</li>
+                    <li>You can take the test now or save this job to take it whenever you are ready.</li>
+                    <li>The 5-minute timer starts once you click "Start Screening Test".</li>
                   </ul>
                 </div>
               </div>
             ) : (
               <p className="modal-standard-desc">
-                Your candidate profile and resume details will be submitted directly to {selectedJob.CompanyName}.
+                Your candidate profile and verified resume details will be submitted directly to {selectedJob.CompanyName}.
               </p>
             )}
 
@@ -391,7 +410,7 @@ const JobCard = () => {
 
               {selectedJob.hasTest ? (
                 <button className="btn-modal-confirm" onClick={startAssessmentTest}>
-                  I am Ready, Start Test
+                  Start Screening Test
                 </button>
               ) : (
                 <button className="btn-modal-confirm" onClick={confirmDirectApplication}>

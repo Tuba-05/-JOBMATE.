@@ -482,51 +482,199 @@
   cursor: pointer;
 }
 
-/* Saved Jobs Distinct Gold/Amber Theme */
-.saved-theme-container {
-  border-color: rgba(245, 158, 11, 0.5) !important;
-  box-shadow: 0 20px 50px rgba(245, 158, 11, 0.2) !important;
+/* Saved Vault Executive Horizontal List Layout */
+.saved-vault-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
 }
 
-.amber-badge {
+.vault-summary-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.vault-count-tag {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  padding: 0.3rem 0.85rem;
+  border-radius: 14px;
+}
+
+.saved-vault-item-card {
+  background: rgba(245, 158, 11, 0.06);
+  border: 1.5px solid rgba(245, 158, 11, 0.35);
+  border-radius: 20px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.saved-vault-item-card:hover {
+  border-color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(245, 158, 11, 0.25);
+}
+
+.vault-item-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex: 1.2;
+}
+
+.company-avatar-badge {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.1rem;
+  border: 1.5px solid #fef08a;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.vault-job-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.vault-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.vault-job-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+  color: #ffffff;
+}
+
+.vault-company-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.vault-details-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.v-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.2rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.775rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.amber-test-pill {
   background: rgba(245, 158, 11, 0.2) !important;
   border-color: #fbbf24 !important;
-  color: #fbbf24 !important;
+  color: #fef08a !important;
 }
 
-.amber-title {
-  color: #fbbf24 !important;
-  text-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+.vault-item-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
-.amber-search-input:focus {
-  border-color: #fbbf24 !important;
-  box-shadow: 0 0 20px rgba(251, 191, 36, 0.3) !important;
+.vault-skills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
-.amber-btn {
-  background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
-  border-color: #fef08a !important;
+.vault-skill-tag {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid #34d399;
+  color: #6ee7b7;
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+  font-size: 0.775rem;
+  font-weight: 600;
 }
 
-.saved-card-amber {
-  border: 1.5px solid rgba(245, 158, 11, 0.4) !important;
-  background: rgba(245, 158, 11, 0.08) !important;
-  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.15) !important;
+.vault-skill-more {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  align-self: center;
 }
 
-.saved-card-amber:hover {
-  border-color: #fbbf24 !important;
-  box-shadow: 0 14px 40px rgba(251, 191, 36, 0.3) !important;
-  background: rgba(245, 158, 11, 0.14) !important;
+.vault-item-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.btn-remove-saved {
-  background: rgba(239, 68, 68, 0.2) !important;
-  border-color: #f87171 !important;
-  color: #f87171 !important;
+.btn-vault-apply {
+  background: linear-gradient(135deg, #1cb5ab 0%, #0d9488 100%);
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  border-radius: 12px;
+  padding: 0.55rem 1.15rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(28, 181, 171, 0.3);
 }
 
-.btn-remove-saved:hover {
-  background: rgba(239, 68, 68, 0.4) !important;
+.btn-vault-apply:hover {
+  background: linear-gradient(135deg, #22d3ee 0%, #14b8a6 100%);
+  transform: translateY(-2px);
+}
+
+.btn-vault-remove {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1.5px solid #f87171;
+  color: #f87171;
+  border-radius: 12px;
+  padding: 0.55rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.btn-vault-remove:hover {
+  background: rgba(239, 68, 68, 0.4);
+  color: #ffffff;
+}
+
+@media (max-width: 900px) {
+  .saved-vault-item-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .vault-item-right {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }

@@ -217,14 +217,14 @@ const JobCard = () => {
 
         <header className="job-page-header">
           <span className={`portal-badge ${isSavedView ? "amber-badge" : ""}`}>
-            {isSavedView ? "CANDIDATE SAVED COLLECTION" : "LIVE OPPORTUNITIES"}
+            {isSavedView ? "CANDIDATE SAVED VAULT" : "LIVE OPPORTUNITIES"}
           </span>
           <h1 className={`job-page-title ${isSavedView ? "amber-title" : ""}`}>
-            {isSavedView ? "My Saved Jobs" : "Explore Job Vacancies"}
+            {isSavedView ? "Saved Job Collection" : "Explore Job Vacancies"}
           </h1>
           <p className="job-page-subtitle">
             {isSavedView
-              ? "Your bookmarked career openings ready for instant assessment and application."
+              ? "Your curated collection of bookmarked career openings ready for application or screening assessment."
               : "Browse verified job vacancies posted by top employers. Take skill assessments or save openings to your candidate profile."}
           </p>
         </header>
@@ -235,7 +235,7 @@ const JobCard = () => {
             type="text"
             placeholder={
               isSavedView
-                ? "Filter your saved jobs by title, skills, or company..."
+                ? "Search saved jobs by title, skills, or company name..."
                 : "Filter vacancies by title, skills, or company name..."
             }
             value={searchFilter}
@@ -267,10 +267,10 @@ const JobCard = () => {
             {isSavedView ? (
               <div className="empty-saved-jobs-content">
                 <p style={{ fontSize: "1.15rem", fontWeight: 700, color: "#fbbf24", marginBottom: "0.75rem" }}>
-                  You currently have 0 saved jobs.
+                  You currently have 0 saved jobs in your collection.
                 </p>
                 <p style={{ color: "rgba(255, 255, 255, 0.8)", marginBottom: "1.5rem" }}>
-                  Browse active vacancies and click "Save" on any job listing to bookmark it here!
+                  Browse live vacancies and click "Save" on any job card to bookmark it here!
                 </p>
                 <button
                   className="btn-retry amber-btn"
@@ -283,8 +283,83 @@ const JobCard = () => {
               <p>No job vacancies found matching your search query.</p>
             )}
           </div>
+        ) : isSavedView ? (
+          /* SAVED VAULT - Executive Horizontal Bookmark List Layout */
+          <div className="saved-vault-list">
+            <div className="vault-summary-bar">
+              <span className="vault-count-tag">{filteredJobs.length} Saved Openings</span>
+            </div>
+
+            {filteredJobs.map((job) => {
+              const jobIdStr = String(job.id);
+              const isApplied = appliedJobs.includes(jobIdStr);
+              const skillsArray = (job.skillsRequired || "").split(/,(?![^(]*\))/).map((s) => s.trim()).filter(Boolean);
+              const companyInitials = (job.CompanyName || "EP")
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
+
+              return (
+                <div key={job.id} className="saved-vault-item-card">
+                  {/* Left Column: Avatar + Details */}
+                  <div className="vault-item-left">
+                    <div className="company-avatar-badge">{companyInitials}</div>
+                    <div className="vault-job-meta">
+                      <div className="vault-title-row">
+                        <h3 className="vault-job-title">{job.jobTitle}</h3>
+                        <span className="vault-company-name">{job.CompanyName || "Enterprise Partner"}</span>
+                      </div>
+                      <div className="vault-details-pills">
+                        <span className="v-pill">{job.location || "Remote / Onsite"}</span>
+                        <span className="v-pill">{job.timings || "Full-time"}</span>
+                        <span className="v-pill">Exp: {job.levelOfExperience || "Entry Level"}</span>
+                        {job.hasTest && (
+                          <span className="v-pill amber-test-pill">
+                            Screening Test ({job.questionCount || 5} Qs, {job.testTimer || 5}m)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Center Column: Skills */}
+                  <div className="vault-item-center">
+                    <div className="vault-skills-wrap">
+                      {skillsArray.slice(0, 4).map((skill, i) => (
+                        <span key={i} className="vault-skill-tag">
+                          {skill}
+                        </span>
+                      ))}
+                      {skillsArray.length > 4 && (
+                        <span className="vault-skill-more">+{skillsArray.length - 4} more</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right Column: Actions */}
+                  <div className="vault-item-right">
+                    <button
+                      className={`btn-vault-apply ${isApplied ? "applied-btn" : ""}`}
+                      onClick={() => handleApplyClick(job)}
+                      disabled={isApplied}
+                    >
+                      {isApplied ? "Applied" : "Apply Now"}
+                    </button>
+                    <button
+                      className="btn-vault-remove"
+                      onClick={() => handleSaveJob(job)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         ) : (
-          /* Job Cards Grid */
+          /* Standard Job Cards Grid for Live Opportunities */
           <div className="job-cards-grid">
             {filteredJobs.map((job) => {
               const jobIdStr = String(job.id);
@@ -295,7 +370,7 @@ const JobCard = () => {
               return (
                 <div
                   key={job.id}
-                  className={`single-job-card ${isSavedView ? "saved-card-amber" : ""}`}
+                  className="single-job-card"
                 >
                   <div className="card-top-header">
                     <span className="company-badge">{job.CompanyName || "Enterprise Partner"}</span>
@@ -346,12 +421,10 @@ const JobCard = () => {
                     </button>
 
                     <button
-                      className={`btn-save-job ${
-                        isSavedView ? "btn-remove-saved" : isSaved ? "saved-active" : ""
-                      }`}
+                      className={`btn-save-job ${isSaved ? "saved-active" : ""}`}
                       onClick={() => handleSaveJob(job)}
                     >
-                      {isSavedView ? "Unsave" : isSaved ? "Saved" : "Save"}
+                      {isSaved ? "Saved" : "Save"}
                     </button>
                   </div>
                 </div>

@@ -132,16 +132,8 @@ def display_profile_info(request):
         if not candidate.resume_link:
             return Response({"success": False, "message": "No resume uploaded"}, status=404)
 
+        # Return candidate.resume_link directly for sub-second instant response
         signed_url = candidate.resume_link
-        if supabase:
-            try:
-                signed_data = supabase.storage.from_("resumes").create_signed_url(
-                    candidate.resume_link, 3600
-                )
-                if signed_data and "signedURL" in signed_data:
-                    signed_url = signed_data["signedURL"]
-            except Exception as se:
-                print("Signed URL generation warning:", se)
 
         return Response(
             {

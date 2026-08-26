@@ -118,7 +118,7 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD', 'jobmateapp12345'),
         'HOST': os.getenv('DB_HOST', 'aws-1-ap-southeast-1.pooler.supabase.com'),
         'PORT': os.getenv('DB_PORT', '6543'),
-        'CONN_MAX_AGE': 600,
+        'CONN_MAX_AGE': None,
         'CONN_HEALTH_CHECKS': True,
         'OPTIONS': {
             'connect_timeout': 15,
